@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pictinder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="title-bar"><h1>Pictinder</h1></div>
+  <div class="content">
+    <section class="settings">
+      <div class="field">
+        <span class="label">Media folders</span>
+        <div id="folderList" class="folder-list"></div>
+        <button type="button" id="addFolder" class="btn link-btn">+ Add folder</button>
+      </div>
+      <div class="settings-row">
+        <label class="field inline-field">
+          <span class="label">Port</span>
+          <input type="number" id="port" min="1024" max="65535" value="3847" />
+        </label>
+        <button type="button" id="serverToggle" class="btn primary compact-btn">Start server</button>
+      </div>
+    </section>
+
+    <section id="serverPanel" class="server-panel hidden">
+      <div class="qr-row">
+        <div id="joinQr" class="qr-wrap"></div>
+        <div class="server-details">
+          <div id="serverUrl" class="url-badge"></div>
+          <div class="join-hint">Scan QR to join &middot; rotates per device</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="devicesSection" class="panel hidden">
+      <div class="panel-header">Devices <span id="devicesCount" class="count-badge">0</span></div>
+      <div id="devicesList" class="panel-body devices-list"></div>
+    </section>
+
+    <section id="albumsSection" class="panel hidden">
+      <div class="panel-header">Albums <span id="albumsCount" class="count-badge">0</span></div>
+      <div id="albumsList" class="panel-body albums-list"></div>
+    </section>
+
+    <section id="cacheSection" class="panel hidden">
+      <div class="panel-header">Cache <span id="cacheSize" class="count-badge">0 MB</span></div>
+      <div class="panel-body cache-row">
+        <span id="cacheDetail" class="cache-detail"></span>
+        <button type="button" id="clearCache" class="btn link-btn danger-btn">Clear cache</button>
+      </div>
+    </section>
+
+    <section class="log-section">
+      <div class="log-header">Activity</div>
+      <div id="log" class="log"></div>
+    </section>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

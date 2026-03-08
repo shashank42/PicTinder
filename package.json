@@ -1,0 +1,64 @@
+{
+  "name": "pictinder",
+  "version": "1.0.0",
+  "description": "Tinder for pictures — shortlist photos/videos from a folder by swiping",
+  "main": "main.js",
+  "scripts": {
+    "postinstall": "electron-rebuild",
+    "start": "electron .",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win"
+  },
+  "keywords": [
+    "electron",
+    "photos",
+    "shortlist",
+    "tinder"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "cookie-parser": "^1.4.6",
+    "electron-store": "^8.1.0",
+    "express": "^4.18.2",
+    "qrcode": "^1.5.3",
+    "ws": "^8.19.0"
+  },
+  "build": {
+    "appId": "com.pictinder.app",
+    "productName": "Pictinder",
+    "directories": {
+      "output": "dist"
+    },
+    "asarUnpack": [
+      "**/better-sqlite3/**"
+    ],
+    "mac": {
+      "category": "public.app-category.photos",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "identity": "Developer ID Application",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": {
+        "teamId": "9Z83RNNA48"
+      }
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    }
+  }
+}

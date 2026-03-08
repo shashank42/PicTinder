@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Album – Pictinder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header id="header">
+    <button type="button" id="backBtn" class="back-btn" title="Back">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="12 15 7 10 12 5" />
+      </svg>
+    </button>
+    <div class="header-info">
+      <h1 id="albumName">Album</h1>
+      <div class="header-meta">
+        <span id="modeBadge" class="mode-badge">Shared</span>
+        <span id="statsText" class="stats-text">Loading…</span>
+      </div>
+    </div>
+    <button type="button" id="undoBtn" class="header-undo-btn hidden" title="Undo last action (Ctrl+Z)">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 8l-3 3 3 3"/><path d="M1 11h12a5 5 0 0 1 0 10H8"/>
+      </svg>
+      Undo
+    </button>
+  </header>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All <span id="countAll">0</span></button>
+    <button class="filter-btn" data-filter="selected">Selected <span id="countSelected">0</span></button>
+    <button class="filter-btn" data-filter="discarded">Discarded <span id="countDiscarded">0</span></button>
+    <button class="filter-btn" data-filter="unswiped">Unswiped <span id="countUnswiped">0</span></button>
+  </div>
+
+  <main class="scroll-area" id="scrollArea">
+    <div id="grid" class="grid"></div>
+    <div id="sentinel" class="sentinel"></div>
+  </main>
+
+  <div id="emptyMsg" class="empty-msg hidden">No items match this filter.</div>
+
+  <div id="itemOverlay" class="item-overlay hidden">
+    <div class="item-overlay-backdrop" id="overlayBackdrop"></div>
+    <div class="item-detail">
+      <button type="button" id="closeOverlay" class="close-overlay">&times;</button>
+      <div class="preview-wrap">
+        <div class="meta-overlay-wrap">
+          <div class="meta-overlay-top">
+            <div id="detailMetaOverlayPath" class="meta-overlay-line meta-overlay-center" aria-hidden="true"></div>
+            <div id="detailMetaOverlayFilename" class="meta-overlay-line meta-overlay-center" aria-hidden="true"></div>
+          </div>
+          <div class="meta-overlay-row">
+            <div id="detailMetaOverlayLeft" class="meta-overlay meta-overlay-left" aria-hidden="true"></div>
+            <div id="detailMetaOverlayRight" class="meta-overlay meta-overlay-right" aria-hidden="true"></div>
+          </div>
+        </div>
+        <img id="previewImg" class="hidden" alt="" />
+        <video id="previewVideo" class="hidden" controls loop playsinline></video>
+        <div id="previewPlaceholder" class="preview-placeholder hidden">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5">
+            <rect x="2" y="2" width="20" height="20" rx="3"/>
+            <circle cx="8.5" cy="8.5" r="2"/>
+            <path d="M21 15l-5-5L5 21"/>
+          </svg>
+          <span id="placeholderName"></span>
+        </div>
+      </div>
+      <div class="item-info">
+        <div id="detailFilename" class="detail-filename"></div>
+        <div id="detailStatus" class="detail-status"></div>
+      </div>
+      <div class="file-actions">
+        <button type="button" id="btnReveal" class="file-action-btn" title="Reveal in Finder">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+          </svg>
+          Reveal
+        </button>
+        <button type="button" id="btnOpen" class="file-action-btn" title="Open in default app">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          Open
+        </button>
+        <button type="button" id="btnShare" class="file-action-btn" title="Share / Copy to clipboard">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
+            <polyline points="16 6 12 2 8 6"/>
+            <line x1="12" y1="2" x2="12" y2="15"/>
+          </svg>
+          Share
+        </button>
+        <button type="button" id="btnCopyPath" class="file-action-btn" title="Copy file path to clipboard">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+          </svg>
+          Copy Path
+        </button>
+      </div>
+      <div class="item-actions">
+        <button type="button" id="btnSelect" class="action-btn select-btn">✓ Select</button>
+        <button type="button" id="btnDiscard" class="action-btn discard-btn">✗ Discard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Long-press action sheet (mobile) -->
+  <div id="actionSheet" class="action-sheet hidden">
+    <div class="action-sheet-backdrop" id="actionSheetBackdrop"></div>
+    <div class="action-sheet-panel">
+      <div class="action-sheet-title" id="actionSheetTitle"></div>
+      <button type="button" class="action-sheet-btn" id="asReveal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+        </svg>
+        Reveal in Finder
+      </button>
+      <button type="button" class="action-sheet-btn" id="asOpen">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+          <polyline points="15 3 21 3 21 9"/>
+          <line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+        Open on Desktop
+      </button>
+      <button type="button" class="action-sheet-btn" id="asShare">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
+          <polyline points="16 6 12 2 8 6"/>
+          <line x1="12" y1="2" x2="12" y2="15"/>
+        </svg>
+        Share
+      </button>
+      <button type="button" class="action-sheet-btn action-sheet-cancel" id="asCancel">Cancel</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
