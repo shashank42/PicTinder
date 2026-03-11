@@ -1,6 +1,6 @@
 # Pictinder
 
-Tinder for pictures. Swipe to shortlist photos/videos from local folders (e.g. an external drive) without moving or deleting originals.
+Tinder for pictures. Swipe to shortlist photos/videos from local folders (e.g. an external drive) without moving or deleting originals + Face recognition.
 
 ## Why
 
