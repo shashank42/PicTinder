@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -8,6 +9,7 @@
   <title>Pictinder</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <div id="loading">Loading…</div>
   <div id="empty" class="hidden">No media in this folder.</div>
@@ -21,8 +23,10 @@
   <div id="createScreen" class="screen hidden">
     <h2>New album</h2>
     <input type="text" id="albumName" placeholder="Album name" />
-    <label class="mode-option"><input type="radio" name="mode" value="shared" checked /> Show all photos to everyone</label>
-    <label class="mode-option"><input type="radio" name="mode" value="distributed" /> Distribute photos across devices</label>
+    <label class="mode-option"><input type="radio" name="mode" value="distributed" checked /> Distributed · Photos are
+      split across devices</label>
+    <label class="mode-option"><input type="radio" name="mode" value="shared" /> Duplicated · Every device sees all
+      photos</label>
     <button type="button" id="btnCreateSubmit" class="btn-join primary">Create</button>
   </div>
 
@@ -33,18 +37,99 @@
 
   <div id="app" class="hidden">
     <div class="top-bar">
-      <div class="status-indicator">
-        <span class="status-dot" id="statusDot"></span>
-        <span class="status-text" id="statusText">Connecting…</span>
+      <div class="top-bar-left">
+        <div class="status-indicator">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-text" id="statusText">Connecting…</span>
+        </div>
+        <span class="top-bar-hint">◀▶ browse · ▲ select · ▼ reject</span>
       </div>
-      <button type="button" id="albumExplorerBtn" class="top-bar-btn" title="Albums">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="2" width="7" height="7" rx="1.5"/>
-          <rect x="11" y="2" width="7" height="7" rx="1.5"/>
-          <rect x="2" y="11" width="7" height="7" rx="1.5"/>
-          <rect x="11" y="11" width="7" height="7" rx="1.5"/>
-        </svg>
-      </button>
+      <span class="top-bar-progress" id="progressText">0 / 0</span>
+      <div class="top-bar-right">
+        <div class="toolbar-btn-wrap">
+          <button type="button" id="helpBtn" class="top-bar-btn" title="Help">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </button>
+          <div id="helpDropdown" class="help-dropdown hidden">
+            <div class="help-dropdown-title">Getting started</div>
+            <ol class="help-steps">
+              <li class="help-step">
+                <span class="help-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                </span>
+                <span class="help-text"><strong>Scan the QR code</strong> on the desktop app, or open in your browser. Invite friends, family, or your team.</span>
+              </li>
+              <li class="help-step">
+                <span class="help-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </span>
+                <span class="help-text"><strong>Create an album</strong> and choose a mode &mdash; split photos across devices or let everyone see all of them.</span>
+              </li>
+              <li class="help-step">
+                <span class="help-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </span>
+                <span class="help-text"><strong>Swipe left &amp; right</strong> (or use arrow keys) to browse through photos and videos.</span>
+              </li>
+              <li class="help-step">
+                <span class="help-icon">
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h16M4 10h12M6 16h8" /></svg>
+                </span>
+                <span class="help-text"><strong>Filter your feed</strong> by file type, folder, or person to focus on what matters.</span>
+              </li>
+              <li class="help-step">
+                <span class="help-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+                <span class="help-text"><strong>Swipe up to select</strong>, swipe down to reject. Build your shortlist in seconds.</span>
+              </li>
+              <li class="help-step">
+                <span class="help-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </span>
+                <span class="help-text"><strong>Identify people</strong> &mdash; the app detects faces and lets you name friends &amp; family.</span>
+              </li>
+              <li class="help-step">
+                <span class="help-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+                </span>
+                <span class="help-text"><strong>Share to Google Drive</strong> &mdash; upload selected photos to each person&rsquo;s account automatically.</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <button type="button" id="filterBtn" class="top-bar-btn" title="Filter feed">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 4h16M4 10h12M6 16h8" />
+          </svg>
+          <span id="filterBadge" class="filter-badge hidden">1</span>
+        </button>
+        <button type="button" id="albumExplorerBtn" class="top-bar-btn" title="Albums">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="7" height="7" rx="1.5" />
+            <rect x="11" y="2" width="7" height="7" rx="1.5" />
+            <rect x="2" y="11" width="7" height="7" rx="1.5" />
+            <rect x="11" y="11" width="7" height="7" rx="1.5" />
+        </button>
+        <button type="button" id="identityManagerBtn" class="top-bar-btn" title="People">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </button>
+      </div>
     </div>
     <div id="cardStack">
       <div id="currentCard" class="card">
@@ -58,54 +143,160 @@
               <div id="metaOverlayLeft" class="meta-overlay meta-overlay-left" aria-hidden="true"></div>
               <div id="metaOverlayRight" class="meta-overlay meta-overlay-right" aria-hidden="true"></div>
             </div>
+            <div class="meta-overlay-bottom-row"
+              style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; margin-bottom: 52px;">
+              <div id="metaOverlayCreated" class="meta-overlay-line" aria-hidden="true" style="margin-bottom: 0;"></div>
+              <div id="metaOverlayIdentities" class="meta-overlay-identities" style="pointer-events: auto;"></div>
+            </div>
           </div>
+          <div id="mainFaceRect" class="face-prompt-rect hidden"
+            style="pointer-events: none; z-index: 3; box-shadow: 0 0 0 2px #00ff00, 0 0 10px rgba(0,255,0,0.5);">
+          </div>
+          <div id="allFaceRects"></div>
           <img id="currentImg" alt="" />
           <video id="currentVideo" class="hidden" controls loop playsinline></video>
+          <div id="selectionBadge" class="selection-badge hidden"></div>
+          <div id="autoRotBadge" class="auto-rot-badge hidden">🔄</div>
+          <div id="faceCountBadge" class="face-count-badge hidden">0</div>
+          <div id="faceScanBadge" class="face-scan-badge hidden">🚫</div>
+          <div id="votesBar" class="votes-bar hidden"></div>
+          <div id="toggleFlash" class="toggle-flash hidden"></div>
+        </div>
+      </div>
+      <div class="bottom-controls">
+        <div class="bottom-actions">
+          <button type="button" id="undoBtn" class="pill-btn hidden" title="Undo last swipe">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 8l-3 3 3 3" />
+              <path d="M1 11h12a5 5 0 0 1 0 10H8" />
+            </svg>
+            Undo
+          </button>
+          <button type="button" id="rotateBtn" class="pill-btn" title="Rotate 90°">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 4v6h6" />
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+            </svg>
+            Rotate
+          </button>
+          <button type="button" id="revealBtn" class="pill-btn" title="Reveal in Finder">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h2l2 3h10a2 2 0 012 2z" />
+              <polyline points="12 11 12 16 16 16 16 11" />
+              <line x1="12" y1="8" x2="12" y2="8" />
+            </svg>
+            Reveal
+          </button>
+          <button type="button" id="openBtn" class="pill-btn" title="Open file">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+            Open
+          </button>
+          <button type="button" id="shareBtn" class="pill-btn" title="Share this photo/video">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+            Share
+          </button>
         </div>
       </div>
     </div>
-    <div class="bottom-controls">
-      <div class="bottom-actions">
-        <button type="button" id="undoBtn" class="pill-btn hidden" title="Undo last swipe">
-          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 8l-3 3 3 3"/><path d="M1 11h12a5 5 0 0 1 0 10H8"/>
-          </svg>
-          Undo
-        </button>
-        <button type="button" id="shareBtn" class="pill-btn" title="Share this photo/video">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
-            <polyline points="16 6 12 2 8 6"/>
-            <line x1="12" y1="2" x2="12" y2="15"/>
-          </svg>
-          Share
-        </button>
-        <button type="button" id="saveBtn" class="pill-btn" title="Save to device">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          Save
-        </button>
-      </div>
-      <div class="hint">Swipe right = select · left = skip</div>
-      <div class="progress"><span id="progressText">0 / 0</span></div>
-    </div>
-  </div>
 
-  <div id="albumExplorer" class="overlay hidden">
-    <div class="overlay-backdrop" id="explorerBackdrop"></div>
-    <div class="overlay-panel">
-      <div class="overlay-header">
-        <h3>Albums</h3>
-        <button type="button" id="closeExplorer" class="overlay-close">&times;</button>
+    <div id="albumExplorer" class="overlay hidden">
+      <div class="overlay-backdrop" id="explorerBackdrop"></div>
+      <div class="overlay-panel">
+        <div class="overlay-header">
+          <h3>Albums</h3>
+          <button type="button" id="closeExplorer" class="overlay-close">&times;</button>
+        </div>
+        <div class="explorer-settings-label">Album settings · Name, mode, progress. Delete from the button below.</div>
+        <div id="explorerAlbumList" class="explorer-list"></div>
       </div>
-      <div class="explorer-settings-label">Album settings · Name, mode, progress. Delete from the button below.</div>
-      <div id="explorerAlbumList" class="explorer-list"></div>
     </div>
-  </div>
 
-  <script src="app.js"></script>
+    <div id="identityManagerOverlay" class="overlay hidden">
+      <div class="overlay-backdrop" id="identityManagerBackdrop"></div>
+      <div class="overlay-panel identity-panel">
+        <div class="overlay-header">
+          <h3>People</h3>
+          <button type="button" id="closeIdentityManager" class="overlay-close">&times;</button>
+        </div>
+        <div class="identity-settings-label">View, rename, merge, or delete recognized people.</div>
+        <div id="identityList" class="identity-list"></div>
+      </div>
+    </div>
+
+    <div id="filterOverlay" class="overlay hidden">
+      <div class="overlay-backdrop" id="filterBackdrop"></div>
+      <div class="overlay-panel filter-panel">
+        <div class="overlay-header">
+          <h3>Filter feed</h3>
+          <button type="button" id="closeFilter" class="overlay-close">&times;</button>
+        </div>
+        <p class="filter-hint">Your personal shortlist: only media from selected types and folders. In distributed mode
+          each device can choose different filters (e.g. you pick day1, others pick day2). Folders are relative to the
+          desktop app&rsquo;s media folders.</p>
+        <div class="filter-section">
+          <label class="filter-dedup-label"><input type="checkbox" id="filterDedup" checked /> Deduplicate &amp; pick
+            best across filetypes (e.g. RAW vs JPG for same image)</label>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-title">People</div>
+          <div id="filterIdentities" class="filter-options"></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-title">File types</div>
+          <div id="filterFileTypes" class="filter-options"></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-title">Folder paths</div>
+          <input type="text" id="filterFolderSearch" class="filter-search" placeholder="Type to search folders…" />
+          <div id="filterFolderPaths" class="filter-folders filter-folders-tree"></div>
+        </div>
+        <div class="filter-actions">
+          <button type="button" id="filterClear" class="pill-btn secondary">Clear filters</button>
+          <button type="button" id="filterApply" class="pill-btn primary">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="facePromptOverlay" class="overlay hidden">
+      <div class="overlay-backdrop" id="facePromptBackdrop"></div>
+      <div class="overlay-panel face-prompt-panel">
+        <div class="overlay-header">
+          <h3>Who is this?</h3>
+          <button type="button" id="facePromptClose" class="overlay-close">&times;</button>
+        </div>
+        <div class="face-prompt-body">
+          <div class="face-prompt-img-container">
+            <img id="facePromptImg" class="face-prompt-img" alt="Photo with face" />
+            <div id="facePromptRect" class="face-prompt-rect"></div>
+          </div>
+          <div class="face-prompt-crop-container hidden" id="facePromptCropContainer">
+            <img id="facePromptCropImg" class="face-prompt-crop-img" alt="Isolated face crop" />
+          </div>
+          <input type="text" id="facePromptName" class="face-prompt-input" placeholder="Enter name…"
+            autocomplete="off" />
+          <div id="facePromptSuggestions" class="face-prompt-suggestions"></div>
+        </div>
+        <div class="face-prompt-actions">
+          <button type="button" id="facePromptSkip" class="pill-btn secondary">Skip</button>
+          <button type="button" id="facePromptSave" class="pill-btn primary">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
+
 </html>

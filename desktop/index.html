@@ -7,7 +7,84 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="title-bar"><h1>Pictinder</h1></div>
+  <div class="title-bar">
+    <h1>Pictinder</h1>
+    <div class="title-bar-actions">
+      <div class="toolbar-btn-wrap">
+        <button type="button" id="helpBtn" class="toolbar-icon-btn" title="Help">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </button>
+        <div id="helpDropdown" class="toolbar-dropdown help-dropdown hidden">
+          <div class="toolbar-dropdown-header">Getting started</div>
+          <ol class="help-steps">
+            <li class="help-step"><span class="help-icon" style="color:#0a84ff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span class="help-text"><strong>Scan the QR code</strong> on your phone, or share the link. Invite friends, family, or your team.</span></li>
+            <li class="help-step"><span class="help-icon" style="color:#30d158"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span class="help-text"><strong>Create an album</strong> and choose a mode &mdash; split photos or let everyone see all.</span></li>
+            <li class="help-step"><span class="help-icon" style="color:#ff9f0a"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span><span class="help-text"><strong>Swipe left &amp; right</strong> to browse photos and videos.</span></li>
+            <li class="help-step"><span class="help-icon" style="color:#bf5af2"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h16M4 10h12M6 16h8"/></svg></span><span class="help-text"><strong>Filter your feed</strong> by file type, folder, or person.</span></li>
+            <li class="help-step"><span class="help-icon" style="color:#ff375f"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span><span class="help-text"><strong>Swipe up to select</strong>, down to reject. Build your shortlist fast.</span></li>
+            <li class="help-step"><span class="help-icon" style="color:#64d2ff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="help-text"><strong>Identify people</strong> &mdash; faces are detected and you can name them.</span></li>
+            <li class="help-step"><span class="help-icon" style="color:#30d158"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></span><span class="help-text"><strong>Share to Google Drive</strong> &mdash; upload selected photos to each person.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="toolbar-btn-wrap">
+        <button type="button" id="cacheBtn" class="toolbar-icon-btn" title="Cache">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span id="cacheBadge" class="cache-badge hidden">0</span>
+        </button>
+        <div id="cacheDropdown" class="toolbar-dropdown hidden">
+          <div class="toolbar-dropdown-header">Cache <span id="cacheSize" class="count-badge">0 MB</span></div>
+          <div class="toolbar-dropdown-body cache-dropdown-body">
+            <div id="cacheDetail" class="cache-detail">Empty</div>
+            <button type="button" id="clearCache" class="btn link-btn danger-btn">Clear cache</button>
+          </div>
+        </div>
+      </div>
+      <div class="toolbar-btn-wrap">
+        <button type="button" id="cloudSettingsBtn" class="toolbar-icon-btn" title="Cloud settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+        </button>
+        <div id="cloudDropdown" class="toolbar-dropdown hidden">
+          <div class="toolbar-dropdown-header">Cloud Backup <span id="cloudAccountsCount" class="count-badge">0</span></div>
+          <div id="cloudDropdownBody" class="toolbar-dropdown-body cloud-config"></div>
+        </div>
+      </div>
+      <div class="toolbar-btn-wrap">
+        <button type="button" id="uploadedAlbumsBtn" class="toolbar-icon-btn" title="Uploaded albums">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        </button>
+        <div id="uploadedAlbumsDropdown" class="toolbar-dropdown uploaded-albums-dropdown hidden">
+          <div class="toolbar-dropdown-header">
+            <span>Uploaded Albums</span>
+          </div>
+          <div class="toolbar-dropdown-body">
+            <input type="text" id="uploadedAlbumsSearch" class="dropdown-search" placeholder="Search album or folder…" />
+            <div id="uploadedAlbumsList" class="uploaded-albums-list"></div>
+          </div>
+        </div>
+      </div>
+      <div class="toolbar-btn-wrap">
+        <button type="button" id="notifBell" class="toolbar-icon-btn" title="Upload notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span id="notifBadge" class="notif-badge hidden">0</span>
+        </button>
+        <div id="notifDropdown" class="toolbar-dropdown hidden">
+          <div class="toolbar-dropdown-header">
+            <span>Upload Notifications</span>
+            <div class="toolbar-dropdown-header-actions">
+              <button type="button" id="resumeAllUploads" class="btn link-btn">Resume all</button>
+              <button type="button" id="snoozeAllUploads" class="btn link-btn">Snooze all</button>
+            </div>
+          </div>
+          <div class="toolbar-dropdown-body">
+            <input type="text" id="notifSearch" class="dropdown-search" placeholder="Search notifications…" />
+            <div id="cloudNotificationsList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="content">
     <section class="settings">
       <div class="field">
@@ -30,6 +107,7 @@
         <div class="server-details">
           <div id="serverUrl" class="url-badge"></div>
           <div class="join-hint">Scan QR to join &middot; rotates per device</div>
+          <button type="button" id="openDesktopFeed" class="btn primary compact-btn open-desktop-btn">Open on Desktop</button>
         </div>
       </div>
     </section>
@@ -40,22 +118,75 @@
     </section>
 
     <section id="albumsSection" class="panel hidden">
-      <div class="panel-header">Albums <span id="albumsCount" class="count-badge">0</span></div>
-      <div id="albumsList" class="panel-body albums-list"></div>
-    </section>
-
-    <section id="cacheSection" class="panel hidden">
-      <div class="panel-header">Cache <span id="cacheSize" class="count-badge">0 MB</span></div>
-      <div class="panel-body cache-row">
-        <span id="cacheDetail" class="cache-detail"></span>
-        <button type="button" id="clearCache" class="btn link-btn danger-btn">Clear cache</button>
+      <div class="panel-header">Albums <span id="albumsCount" class="count-badge">0</span>
+        <button type="button" id="createAlbumBtn" class="panel-header-btn" title="Create album">+</button>
       </div>
+      <div id="createAlbumForm" class="create-album-form hidden">
+        <input type="text" id="newAlbumName" class="create-album-input" placeholder="Album name" />
+        <select id="newAlbumMode" class="create-album-select">
+          <option value="distributed">Distributed</option>
+          <option value="shared">Shared</option>
+        </select>
+        <button type="button" id="newAlbumSubmit" class="btn primary create-album-submit">Create</button>
+        <button type="button" id="newAlbumCancel" class="btn link-btn">Cancel</button>
+      </div>
+      <div id="albumsList" class="panel-body albums-list"></div>
     </section>
 
     <section class="log-section">
       <div class="log-header">Activity</div>
+      <div id="uploadProgressSection" class="upload-progress-section hidden"></div>
       <div id="log" class="log"></div>
     </section>
+  </div>
+
+  <div id="uploadModal" class="upload-modal hidden">
+    <div class="upload-modal-card">
+      <div class="upload-modal-header">
+        <h3>Upload to Cloud</h3>
+        <button type="button" id="closeUploadModal" class="overlay-close">&times;</button>
+      </div>
+      <div id="uploadAlbumName" class="upload-album-name"></div>
+      <div class="upload-form-row">
+        <label>Media scope</label>
+        <select id="uploadMediaScope">
+          <option value="all">All album media</option>
+          <option value="selected" selected>Selected media only</option>
+        </select>
+      </div>
+      <div class="upload-form-row">
+        <label>Upload strategy</label>
+        <select id="uploadMode">
+          <option value="duplicate">Duplicate</option>
+          <option value="distribute" selected>Distribute</option>
+        </select>
+      </div>
+      <div id="uploadModeExplainer" class="upload-mode-explainer"></div>
+      <div class="upload-form-row">
+        <label>Target accounts</label>
+        <input type="text" id="uploadAccountSearch" class="upload-account-search" placeholder="Search accounts..." autocomplete="off" />
+        <div id="uploadAccountChecklist" class="upload-account-checklist"></div>
+      </div>
+      <div class="upload-modal-actions">
+        <button type="button" id="startUploadBtn" class="btn primary">Start upload</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="resumePrompt" class="upload-modal hidden">
+    <div class="upload-modal-card">
+      <div class="upload-modal-header">
+        <h3>Resume Cloud Uploads?</h3>
+        <button type="button" id="closeResumePrompt" class="overlay-close" title="Close (uploads continue in background)">&times;</button>
+      </div>
+      <div id="resumePromptText" class="upload-mode-explainer"></div>
+      <div class="upload-modal-actions">
+        <button type="button" id="resumePromptCancel" class="btn link-btn danger-btn">Cancel Upload</button>
+        <button type="button" id="resumePromptDismiss" class="btn link-btn danger-btn">Dismiss</button>
+        <button type="button" id="resumePromptSnooze" class="btn link-btn">Snooze</button>
+        <button type="button" id="resumePromptResume" class="btn primary">Resume</button>
+      </div>
+    </div>
   </div>
   <script src="renderer.js"></script>
 </body>

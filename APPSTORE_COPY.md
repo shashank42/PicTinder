@@ -1,58 +1,46 @@
-# Pictinder: Mac App Store Description and Copy
+# Pictinder — App Store Copy
 
 ## App Name
-**Pictinder**
+Pictinder
 
 ## Subtitle
-**Swipe through massive photo libraries, together**
+Swipe to shortlist photos, together
 
 ## Promotional Text
-Turn your laptop into a private local photo-review hub. Connect phones with a QR code, swipe to shortlist keepers, and curate thousands of photos/videos without touching your originals.
+Turn your Mac into a photo-review hub. Connect phones with a QR code, swipe to shortlist keepers, and cull thousands of photos and videos without touching originals.
 
-## User Stories (one-line variations)
-- "As a wedding photographer, I want clients to swipe selects on their phones so I can finalize albums faster."
-- "As a family, we want to shortlist favorites from thousands of photos together without passing one laptop around."
-- "As a creative team, we want to split a huge review job across multiple phones and finish first-pass curation quickly."
-- "As an event shooter, I want to keep originals untouched while building a clean shortlist for delivery."
+## Description
+Pictinder makes it fast to review massive photo and video libraries — wedding shoots, events, family trips — right from your phone.
 
-## How to use
-Plug in your external drive, start Pictinder on your Mac, and open the phone interface by scanning a QR code on the same Wi-Fi network. Swipe right to keep, left to skip, and build a clean shortlist in minutes instead of days.
+Start the app on your Mac, point it at a folder (local or external drive), and scan a QR code on any phone. Swipe right to keep, left to skip. Multiple people can review at the same time.
 
-## Full Description
-Pictinder helps photographers, families, and event teams review huge media libraries quickly.
+**Two collaboration modes:**
+- **Shared** — everyone votes on the same photos; results are aggregated.
+- **Distributed** — the workload is split automatically across devices.
 
-Designed for large jobs like weddings and events, Pictinder supports collaborative review across multiple phones with two modes:
-- **Shared mode** for group voting
-- **Distributed mode** to split work automatically across devices
+**Key features:**
+- Swipe-based keep/skip review on phone
+- QR code join — no app install on phones
+- Multi-device collaboration with live progress
+- Handles RAW, HEIC, and video (including MOV/AVI/MKV transcoding)
+- Filter by file type or subfolder
+- Grid-based album detail view for reclassification
+- Rotate, reveal in Finder, open, share, copy path
+- Google Drive export (duplicate or distribute across accounts)
+- Originals are never moved or deleted
 
-Your original files stay where they are. Pictinder is built for curation, not destructive editing.
-
-### Why people use Pictinder
-- Review massive folders of photos and videos faster
-- Collaborate live from multiple phones
-- Keep source media untouched
-- Resume progress and manage albums from desktop
-
-### Key Features
-- Local-first workflow hosted from your Mac
-- QR code join for quick phone onboarding
-- Swipe-based keep/skip review
-- Multi-device collaboration (Shared + Distributed modes)
-- Album progress, activity logs, and device presence
-- Grid-based album detail view for reclassification and final curation
-- Built for large mixed media libraries (including RAW and video-heavy sets)
-
-### Great for
+**Great for:**
 - Wedding and event photographers
 - Families selecting favorites from large shoots
 - Creative teams doing first-pass curation
 
-## Keywords (App Store Connect)
+## Keywords
 photo culling, photo selection, wedding workflow, event photography, swipe review, collaborative curation, local network, RAW photos, video shortlist, photographer tools
 
-## Suggested App Store screenshots captions
-- "Host review on your Mac"
-- "Join instantly from phone with QR"
-- "Swipe to keep or skip"
-- "Collaborate across multiple devices"
-- "Refine picks in album detail view"
+## Screenshot Captions
+1. Host a review session from your Mac
+2. Join instantly with a QR code
+3. Swipe to keep or skip
+4. Collaborate across multiple devices
+5. Refine picks in album detail view
+6. Export to Google Drive

@@ -1,67 +1,98 @@
 # Pictinder
 
-**Pictinder** — Tinder for pictures: shortlist photos/videos from a folder hierarchy on disk (e.g. external hard disk) by swiping, without moving or deleting files.
+Tinder for pictures. Swipe to shortlist photos/videos from local folders (e.g. an external drive) without moving or deleting originals.
 
-## Goals
+## Why
 
-- Shortlist media from a **local folder hierarchy** (e.g. 10k+ wedding photos/videos on an external hard disk).
-- Build a **subfolder or list of "selected" paths** so you can later copy only those files for sharing — no in-app deletion or moving of originals.
-- **Read-only over the source**: all operations are view + "mark as selected/rejected"; no line of code may delete, move, or overwrite any file.
+Large media libraries (10k+ wedding/event photos, RAW + JPEG + video) are painful to cull. Pictinder lets you review on your phone via swipe while media stays on the laptop's disk. Multiple people can review simultaneously. The result is a clean shortlist ready to export.
 
-## Motivation
+## How it works
 
-- Large post-wedding libraries (10k+ items), mix of RAW (e.g. 50MB+), JPEG, and MP4.
-- Need to review on a **phone-friendly UI** (swipe) while media stays on **hard disk plugged into laptop** (no bulk copy to laptop for review).
-- Result: a shortlist (e.g. paths or a subfolder) to copy only chosen files for sharing.
+1. **Desktop app** (Electron, macOS/Windows) — add media folders, start the embedded server, get a QR code.
+2. **Phone** (any browser, same Wi-Fi) — scan QR, join or create an album, swipe right to keep / left to skip.
+3. **Album detail** — grid view for reclassification, metadata inspection, and export.
 
-## Tech stack
+Originals are never deleted, moved, or overwritten. All state lives in a local SQLite database.
 
-- **Electron** desktop app: one codebase, builds as `.app` (Mac) and `.exe` (Windows)—easy to run or ship to photographers on either OS. No file deletion anywhere.
-- **Node.js** (embedded in Electron): local server runs inside the app when you click **Start server**; serves the phone web UI, media, and API for swipe state. No separate install.
-- **Phone**: browser opens the URL shown in the app; same WiFi. The desktop window shows a **live log** of swipe and connection events from the phone (Apple-like UI: clean, minimal, server toggle, scrollable log).
+## Features
+
+### Collaboration
+- **Shared mode** — all devices see the same items; votes are aggregated.
+- **Distributed mode** — items are split across devices automatically; faster swipers get more work.
+
+### Media handling
+- Recursive folder scan with support for JPEG, PNG, HEIC/HEIF, RAW (NEF, ARW, CR2, CR3, DNG, RAF, ORF, RW2, PEF), GIF, WebP, MP4, MOV, AVI, WebM, MKV.
+- RAW/HEIC preview extraction (ExifTool, sips, ffmpeg fallback).
+- Video thumbnails and browser-compatible transcoding (.mov/.avi/.mkv to H.264 MP4).
+- Rotation (Sharp for images, ffmpeg for video), cached per album.
+- EXIF metadata display (date, location, camera, dimensions, duration).
+- Previews, thumbnails, and transcodes cached in `pictinder-data/`.
+
+### Phone UI
+- Full-screen swipe cards with touch gestures and keyboard arrows.
+- Preloads next 10 images for instant transitions.
+- Undo, rotate, reveal in Finder, open file, share/download.
+- Filter feed by file type or subfolder.
+- Album explorer to switch or manage albums.
+
+### Album detail
+- Infinite-scroll grid with filter tabs (All / Selected / Discarded / Unswiped).
+- Full-size preview overlay with metadata and per-device vote chips.
+- Reclassify, rotate, reveal, open, share, copy path.
+- Desktop: double-click to open, right-click to reveal. Touch: long-press action sheet.
+
+### Desktop dashboard
+- Add/remove media folders, configure port, start/stop server.
+- QR code + join URL with rotating tokens.
+- Live device list (online/offline, current album).
+- Album list with progress stats; create/delete albums.
+- Activity log, cache stats, clear cache.
+- Cloud upload notifications with resume/snooze/dismiss.
+
+### Cloud export (Google Drive)
+- Connect multiple Google accounts via OAuth.
+- Upload strategies: **duplicate** (all accounts) or **distribute** (by free space).
+- Scope: all items or selected only.
+- Pause, resume, cancel, retry failed uploads.
+- Per-album Drive folder links.
+
+### Persistence
+- SQLite (albums, items, choices, progress, cloud state).
+- electron-store for folders, port, OAuth credentials.
+- localStorage on phone for device ID and feed filters.
 
 ## Architecture
 
-- **Desktop (Electron)**: Runs on the laptop; you pick the media root (e.g. external drive) and start the embedded server from the UI; live log shows phone actions in real time.
-- **Embedded server (Node)**: Only runs when **Start server** is active; serves API and static assets; reads from media path, writes state file; streams log events to the desktop window.
-- **Phone**: Connects over **local WiFi**; opens the web UI in browser. All file reads go through the laptop; phone never touches disk.
-- **Media path**: Server **recursively scans** the chosen top-level folder (and all subfolders) for media (e.g. `/Volumes/...` or `D:\...`). The **currently viewed** image is served at full resolution (no downscaling). The site **pre-downloads the next 10 images** in the queue so when you swipe to them they are already loaded; thumbnails or proxies only for items further ahead if needed.
-- **Persistence**: Swipe decisions stored in a **text or metadata file on the laptop** (e.g. JSON/CSV). Next session resumes from last position; no deletion of media.
-
 ```mermaid
 flowchart TB
-  subgraph disk [External hard disk]
-    Media[Photos and videos]
+  subgraph disk [External drive]
+    Media[Photos & videos]
   end
   subgraph laptop [Laptop]
     subgraph electron [Electron app]
-      UI[Desktop UI]
-      Toggle[Start/Stop server]
-      Logs[Live log viewer]
+      UI[Desktop dashboard]
+      Server[Node server]
+      DB[(SQLite)]
     end
-    Server[Node server when started]
-    State[State file]
   end
-  subgraph phone [Phone on WiFi]
-    Browser[Web UI in browser]
+  subgraph phone [Phone — same Wi-Fi]
+    Browser[Web UI]
   end
   disk -->|mounted path| Server
-  Server -->|read only| Media
-  Server -->|read write| State
-  Toggle -->|starts/stops| Server
-  Server -->|log events| Logs
-  Browser -->|HTTP over WiFi| Server
-  Server -->|full-res and preload| Browser
+  Server -->|read-only| Media
+  Server <-->|read/write| DB
+  Browser <-->|HTTP + WebSocket| Server
 ```
-
-## Implementation
-
-- **Backend (laptop)**: Scan folder hierarchy from a configurable root path; serve list of media paths; serve **full-resolution** for the current item; optionally thumbnails/proxies for items further in queue; read/write **state file** (e.g. `choices.json` or `progress.txt`) with swipe outcomes and "last index" or "last path".
-- **Frontend (phone)**: Tinder-like swipe UI; **pre-download next 10 images** in queue so the current one is full-res and upcoming ones are ready when the user reaches them; **once an image is swiped on, discard its local copy** (blob/cache) so the browser tab does not grow in size indefinitely; right = selected, left = not selected (or vice versa); each action sends only an update to backend to append to state; no delete/move/trash of **files** in UI or API.
-- **Invariants**: (1) **No deletion of files**: no code path may delete, move, or overwrite any photo/video on disk; (2) the frontend may release in-browser copies (blobs, cached image data) after swipe to limit tab memory; (3) state file is append/update only for *metadata*; (4) "selected" is stored as a list of paths or IDs; creating a "subfolder" later is a separate copy step (e.g. script or export), not part of core app.
 
 ## Running
 
-**From the app:** Open Pictinder on your laptop, choose the media folder (e.g. your external drive), click **Start server**, then on your phone open the URL shown in the app (or scan the QR code) over the same WiFi. The desktop window shows a live log of swipe and connection events from the phone.
+**From the app:** open Pictinder, add a media folder, click **Start server**, scan the QR code on your phone.
 
-**From source:** `npm install` then `npm start`. Build for Mac: `npm run build:mac`. Build for Windows: `npm run build:win`.
+**From source:**
+
+```bash
+npm install
+npm start            # dev
+npm run build:mac    # macOS .dmg
+npm run build:win    # Windows installer
+```

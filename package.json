@@ -23,21 +23,31 @@
     "electron-builder": "^24.9.1"
   },
   "dependencies": {
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "@vladmandic/human": "^3.3.6",
     "better-sqlite3": "^12.6.2",
+    "canvas": "^3.2.1",
     "cookie-parser": "^1.4.6",
+    "dotenv": "^17.3.1",
     "electron-store": "^8.1.0",
     "express": "^4.18.2",
     "qrcode": "^1.5.3",
+    "sharp": "^0.34.5",
     "ws": "^8.19.0"
   },
   "build": {
     "appId": "com.pictinder.app",
-    "productName": "Pictinder",
+    "productName": "PicTinder",
     "directories": {
       "output": "dist"
     },
     "asarUnpack": [
-      "**/better-sqlite3/**"
+      "**/better-sqlite3/**",
+      "**/sharp/**",
+      "**/canvas/**",
+      "**/@img/**",
+      "**/@tensorflow/**",
+      "**/@vladmandic/human/**"
     ],
     "mac": {
       "category": "public.app-category.photos",

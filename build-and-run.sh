@@ -18,6 +18,16 @@ npm run build:mac
 
 echo ""
 echo "=== Building for Windows ==="
+
+# On Windows, install GPU-accelerated TensorFlow if NVIDIA CUDA is available.
+# macOS has no CUDA support so this is skipped there.
+if [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == cygwin* ]]; then
+  echo "Windows detected — installing NVIDIA GPU support…"
+  npm install --no-save @tensorflow/tfjs-node-gpu 2>/dev/null \
+    && echo "GPU package installed — Windows build will use CUDA acceleration" \
+    || echo "GPU package unavailable — Windows build will use CPU (no NVIDIA/CUDA)"
+fi
+
 npm run build:win
 
 echo ""

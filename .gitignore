@@ -40,3 +40,15 @@ tmp/
 Thumbs.db
 .vscode/
 .idea/
+
+# Cursor notes
+cursor_*.md
+
+# Temp utility / test scripts
+phone/patch.js
+phone/revert.js
+test_sharp.js
+test-build.sh
+
+# Face recognition generated data
+face-thumbnails/

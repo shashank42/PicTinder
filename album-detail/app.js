@@ -122,21 +122,29 @@ async function loadNextPage() {
 
 // ---- Grid rendering ----
 
+function applyItemRotation(el, rotation) {
+  const media = el.querySelector('img, video');
+  if (media) media.style.transform = rotation ? `rotate(${rotation * 90}deg)` : '';
+}
+
 function createGridItem(item) {
   const div = document.createElement('div');
   div.className = `grid-item ${item.status}`;
+  div.dataset.rotation = item.rotation || 0;
 
   if (canDisplayAsImage(item.path)) {
     const img = document.createElement('img');
     img.loading = 'lazy';
     img.src = getMediaUrl(item.path);
     img.alt = item.filename;
+    if (item.rotation) img.style.transform = `rotate(${item.rotation * 90}deg)`;
     div.appendChild(img);
   } else if (canDisplayAsVideo(item.path)) {
     const img = document.createElement('img');
     img.loading = 'lazy';
     img.src = getThumbUrl(item.path);
     img.alt = item.filename;
+    if (item.rotation) img.style.transform = `rotate(${item.rotation * 90}deg)`;
     div.appendChild(img);
     const playIcon = document.createElement('div');
     playIcon.className = 'video-play-icon';
@@ -240,12 +248,16 @@ function openItemDetail(item) {
   video.src = '';
   video.pause();
 
+  const rot = item.rotation || 0;
+  const rotStyle = rot ? `rotate(${rot * 90}deg)` : '';
   if (canDisplayAsImage(item.path)) {
     img.classList.remove('hidden');
     img.src = getMediaUrl(item.path);
+    img.style.transform = rotStyle;
   } else if (canDisplayAsVideo(item.path)) {
     video.classList.remove('hidden');
     video.src = getMediaUrl(item.path);
+    video.style.transform = rotStyle;
     video.play().catch(() => {});
   } else {
     placeholder.classList.remove('hidden');
@@ -289,6 +301,30 @@ function closeItemDetail() {
   video.pause();
   video.src = '';
   selectedItem = null;
+}
+
+async function rotateItem() {
+  if (!selectedItem) return;
+  const albumId = getAlbumId();
+  const newRot = ((selectedItem.rotation || 0) + 1) % 4;
+  selectedItem.rotation = newRot;
+  const deg = newRot * 90;
+  const img = document.getElementById('previewImg');
+  const video = document.getElementById('previewVideo');
+  img.style.transform = deg ? `rotate(${deg}deg)` : '';
+  video.style.transform = deg ? `rotate(${deg}deg)` : '';
+  const gridEl = renderedElements.get(selectedItem.path);
+  if (gridEl) {
+    gridEl.dataset.rotation = newRot;
+    applyItemRotation(gridEl, newRot);
+  }
+  try {
+    await fetch(`/api/albums/${albumId}/rotate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: selectedItem.path, rotation: newRot }),
+    });
+  } catch {}
 }
 
 async function reclassify(newStatus) {
@@ -670,6 +706,7 @@ async function init() {
   document.getElementById('btnCopyPath').addEventListener('click', () => {
     if (selectedItem) fileCopyPath(selectedItem.path);
   });
+  document.getElementById('btnRotate').addEventListener('click', () => rotateItem());
 
   document.getElementById('actionSheetBackdrop').addEventListener('click', closeActionSheet);
   document.getElementById('asCancel').addEventListener('click', closeActionSheet);

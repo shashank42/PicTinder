@@ -7,6 +7,10 @@ contextBridge.exposeInMainWorld('pictinder', {
   addFolder: () => ipcRenderer.invoke('add-folder'),
   removeFolder: (folder) => ipcRenderer.invoke('remove-folder', folder),
   openAlbumDetail: (albumId) => ipcRenderer.invoke('open-album-detail', { albumId }),
+  openDesktopFeed: (url) => ipcRenderer.invoke('open-desktop-feed', { url }),
+  openExternalUrl: (url) => ipcRenderer.invoke('open-external-url', { url }),
+  getGoogleOAuthConfig: () => ipcRenderer.invoke('get-google-oauth-config'),
+  saveGoogleOAuthConfig: (config) => ipcRenderer.invoke('save-google-oauth-config', config),
   startServer: (config) => ipcRenderer.invoke('start-server', config),
   stopServer: () => ipcRenderer.invoke('stop-server'),
   onServerLog: (cb) => {
