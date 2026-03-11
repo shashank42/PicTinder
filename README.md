@@ -16,11 +16,45 @@ Originals are never deleted, moved, or overwritten. All state lives in a local S
 
 ## Features
 
+### Desktop dashboard
+
+Add/remove media folders, configure port, start/stop server. QR code + join URL with rotating tokens. Live device list (online/offline, current album). Album list with progress stats; create/delete albums. Activity log, cache stats, clear cache. Cloud upload notifications with resume/snooze/dismiss.
+
+<p align="center">
+  <img src="readme-pics/desktop-dashboard.png" width="420" alt="Desktop dashboard" />
+</p>
+
+### Phone UI
+
+Full-screen swipe cards with touch gestures and keyboard arrows. Preloads next 10 images for instant transitions. Undo, rotate, reveal in Finder, open file, share/download. Filter feed by file type or subfolder. Album explorer to switch or manage albums.
+
+<p align="center">
+  <img src="readme-pics/phone-join.jpg" width="220" alt="Phone — join or create album" />
+  &nbsp;&nbsp;
+  <img src="readme-pics/phone-swipe-faces.jpg" width="220" alt="Swipe card with face detection" />
+  &nbsp;&nbsp;
+  <img src="readme-pics/phone-swipe-single.jpg" width="220" alt="Swipe card — single face" />
+</p>
+
+#### Face recognition
+
+Faces are automatically detected and highlighted with bounding boxes. Name people directly from the swipe card, then filter your feed by person.
+
+#### Filter feed
+
+Filter by file type (images / videos), subfolder path, or detected person. In distributed mode each device can pick different filters so reviewers can divide and conquer.
+
+<p align="center">
+  <img src="readme-pics/phone-filter.jpg" width="260" alt="Filter feed — file types and folder paths" />
+</p>
+
 ### Collaboration
+
 - **Shared mode** — all devices see the same items; votes are aggregated.
 - **Distributed mode** — items are split across devices automatically; faster swipers get more work.
 
 ### Media handling
+
 - Recursive folder scan with support for JPEG, PNG, HEIC/HEIF, RAW (NEF, ARW, CR2, CR3, DNG, RAF, ORF, RW2, PEF), GIF, WebP, MP4, MOV, AVI, WebM, MKV.
 - RAW/HEIC preview extraction (ExifTool, sips, ffmpeg fallback).
 - Video thumbnails and browser-compatible transcoding (.mov/.avi/.mkv to H.264 MP4).
@@ -28,35 +62,29 @@ Originals are never deleted, moved, or overwritten. All state lives in a local S
 - EXIF metadata display (date, location, camera, dimensions, duration).
 - Previews, thumbnails, and transcodes cached in `pictinder-data/`.
 
-### Phone UI
-- Full-screen swipe cards with touch gestures and keyboard arrows.
-- Preloads next 10 images for instant transitions.
-- Undo, rotate, reveal in Finder, open file, share/download.
-- Filter feed by file type or subfolder.
-- Album explorer to switch or manage albums.
-
 ### Album detail
-- Infinite-scroll grid with filter tabs (All / Selected / Discarded / Unswiped).
-- Full-size preview overlay with metadata and per-device vote chips.
-- Reclassify, rotate, reveal, open, share, copy path.
-- Desktop: double-click to open, right-click to reveal. Touch: long-press action sheet.
 
-### Desktop dashboard
-- Add/remove media folders, configure port, start/stop server.
-- QR code + join URL with rotating tokens.
-- Live device list (online/offline, current album).
-- Album list with progress stats; create/delete albums.
-- Activity log, cache stats, clear cache.
-- Cloud upload notifications with resume/snooze/dismiss.
+Infinite-scroll grid with filter tabs (All / Selected / Discarded / Unswiped). Full-size preview overlay with metadata and per-device vote chips. Reclassify, rotate, reveal, open, share, copy path. Desktop: double-click to open, right-click to reveal. Touch: long-press action sheet.
+
+<p align="center">
+  <img src="readme-pics/album-detail.png" width="700" alt="Album detail — grid view with video preview overlay" />
+</p>
 
 ### Cloud export (Google Drive)
-- Connect multiple Google accounts via OAuth.
-- Upload strategies: **duplicate** (all accounts) or **distribute** (by free space).
-- Scope: all items or selected only.
-- Pause, resume, cancel, retry failed uploads.
-- Per-album Drive folder links.
+
+Connect multiple Google accounts via OAuth. Upload strategies: **duplicate** (all accounts) or **distribute** (by free space). Scope: all items or selected only. Pause, resume, cancel, retry failed uploads. Per-album Drive folder links.
+
+<p align="center">
+  <img src="readme-pics/cloud-accounts.png" width="340" alt="Connect Google accounts" />
+  &nbsp;&nbsp;
+  <img src="readme-pics/cloud-upload.png" width="340" alt="Upload to Cloud — strategy and scope" />
+</p>
+<p align="center">
+  <img src="readme-pics/uploaded-albums.png" width="380" alt="Uploaded albums with Drive links" />
+</p>
 
 ### Persistence
+
 - SQLite (albums, items, choices, progress, cloud state).
 - electron-store for folders, port, OAuth credentials.
 - localStorage on phone for device ID and feed filters.
