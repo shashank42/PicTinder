@@ -22,11 +22,14 @@ async function initModel() {
 
   modelLoading = (async () => {
     try {
-      tf = require('@tensorflow/tfjs-node');
+      const { loadTfBackend, getHumanModelBasePath } = require('./tf-helpers');
+      const loaded = loadTfBackend();
+      tf = loaded.tf;
+
       const H = require('@vladmandic/human');
       Human = H.Human || H.default?.Human || H;
 
-      const modelBasePath = 'file://' + path.join(__dirname, '..', 'node_modules', '@vladmandic', 'human', 'models') + '/';
+      const modelBasePath = getHumanModelBasePath();
 
       human = new Human({
         modelBasePath,

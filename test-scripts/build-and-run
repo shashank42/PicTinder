@@ -9,39 +9,50 @@ if [ -f "${PROJECT_DIR}/.env" ]; then
   set -a; source "${PROJECT_DIR}/.env"; set +a
 fi
 
-: "${APPLE_ID:?Set APPLE_ID in .env}"
-: "${APPLE_APP_SPECIFIC_PASSWORD:?Set APPLE_APP_SPECIFIC_PASSWORD in .env}"
-: "${APPLE_TEAM_ID:?Set APPLE_TEAM_ID in .env}"
-
 if [ ! -d node_modules ]; then
   echo "Installing dependencies..."
   npm install
 fi
 
-export APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
-
-echo ""
-echo "=== Building for macOS ==="
-npm run build:mac
-
-echo ""
-echo "=== Building for Windows ==="
-
 if [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == cygwin* ]]; then
-  echo "Windows detected — installing NVIDIA GPU support…"
-  npm install --no-save @tensorflow/tfjs-node-gpu 2>/dev/null \
-    && echo "GPU package installed" \
-    || echo "GPU package unavailable — will use CPU"
-fi
+  # ── Windows ──────────────────────────────────────────────────────
+  echo ""
+  echo "=== Building for Windows ==="
+  npm run rebuild:win
+  npm run build:win
 
-npm run build:win
+  echo ""
+  echo "Build output is in ./dist/"
+  ls -1 dist/*.exe 2>/dev/null || true
 
-echo ""
-echo "Build output is in ./dist/"
-ls -1 dist/*.dmg dist/*.zip dist/*.exe 2>/dev/null || true
+  EXE=$(find dist -maxdepth 1 -name "*.exe" | grep -iv Setup | head -1)
+  if [ -n "$EXE" ]; then
+    echo ""
+    echo "Launching $EXE ..."
+    start "" "$EXE"
+  else
+    echo "No portable .exe found in dist/. Open it manually from dist/."
+  fi
+else
+  # ── macOS (signed + notarized) ───────────────────────────────────
+  : "${APPLE_ID:?Set APPLE_ID in .env}"
+  : "${APPLE_APP_SPECIFIC_PASSWORD:?Set APPLE_APP_SPECIFIC_PASSWORD in .env}"
+  : "${APPLE_TEAM_ID:?Set APPLE_TEAM_ID in .env}"
+  export APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
 
-if [[ "$OSTYPE" == darwin* ]]; then
-  APP=$(find dist/mac* -name "Pictinder.app" -maxdepth 2 2>/dev/null | head -1)
+  echo ""
+  echo "=== Building for macOS ==="
+  npm run build:mac
+
+  echo ""
+  echo "=== Building for Windows (cross-compile) ==="
+  npm run build:win || echo "Windows build failed (cross-compile not supported) — skipping."
+
+  echo ""
+  echo "Build output is in ./dist/"
+  ls -1 dist/*.dmg dist/*.zip dist/*.exe 2>/dev/null || true
+
+  APP=$(find dist/mac* -name "PicTinder.app" -maxdepth 2 2>/dev/null | head -1)
   if [ -n "$APP" ]; then
     echo ""
     echo "Launching $APP ..."
@@ -49,6 +60,4 @@ if [[ "$OSTYPE" == darwin* ]]; then
   else
     echo "Mac .app not found in dist/. Open it manually from dist/."
   fi
-else
-  echo "Not on macOS — run the Windows installer from dist/ manually."
 fi

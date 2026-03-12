@@ -61,20 +61,16 @@ async function initModels() {
 
     modelLoadPromise = (async () => {
         try {
-            try {
-                tf = require('@tensorflow/tfjs-node-gpu');
-                usingGpu = true;
-                console.log('[face-recognition] Loaded GPU-accelerated TensorFlow (CUDA)');
-            } catch {
-                tf = require('@tensorflow/tfjs-node');
-                usingGpu = false;
-                console.log('[face-recognition] Loaded CPU TensorFlow backend');
-            }
+            const { loadTfBackend, getHumanModelBasePath } = require('./tf-helpers');
+            const loaded = loadTfBackend();
+            tf = loaded.tf;
+            usingGpu = loaded.usingGpu;
+            console.log(`[face-recognition] Loaded ${usingGpu ? 'GPU' : 'CPU'} TensorFlow backend`);
 
             const H = require('@vladmandic/human');
             Human = H.Human || H.default?.Human || H;
 
-            const modelBasePath = 'file://' + path.join(__dirname, '..', 'node_modules', '@vladmandic', 'human', 'models') + '/';
+            const modelBasePath = getHumanModelBasePath();
 
             human = new Human({
                 modelBasePath,

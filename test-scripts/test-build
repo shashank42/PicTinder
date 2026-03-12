@@ -9,21 +9,32 @@ if [ ! -d node_modules ]; then
 fi
 
 if [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == cygwin* ]]; then
-  echo "Windows detected — installing NVIDIA GPU support…"
-  npm install --no-save @tensorflow/tfjs-node-gpu 2>/dev/null \
-    && echo "GPU package installed" \
-    || echo "GPU package unavailable — will use CPU"
-fi
+  echo ""
+  echo "=== Building fast test Windows app ==="
+  npm run rebuild:win
+  npm run build:win
 
-echo ""
-echo "=== Building fast test macOS app (Unsigned) ==="
-npm run build:mac -- -c.mac.identity=null -c.mac.hardenedRuntime=false
+  echo ""
+  echo "Build output is in ./dist/"
+  ls -1 dist/*.exe 2>/dev/null || true
 
-echo ""
-echo "Build output is in ./dist/"
-ls -1 dist/*.dmg dist/*.zip dist/*.exe 2>/dev/null || true
+  EXE=$(find dist -maxdepth 1 -name "*.exe" | grep -iv Setup | head -1)
+  if [ -n "$EXE" ]; then
+    echo ""
+    echo "Launching $EXE ..."
+    start "" "$EXE"
+  else
+    echo "No portable .exe found in dist/. Open it manually from dist/."
+  fi
+elif [[ "$OSTYPE" == darwin* ]]; then
+  echo ""
+  echo "=== Building fast test macOS app (Unsigned) ==="
+  npm run build:mac -- -c.mac.identity=null -c.mac.hardenedRuntime=false
 
-if [[ "$OSTYPE" == darwin* ]]; then
+  echo ""
+  echo "Build output is in ./dist/"
+  ls -1 dist/*.dmg dist/*.zip dist/*.exe 2>/dev/null || true
+
   APP=$(find dist/mac* -name "PicTinder.app" -maxdepth 2 2>/dev/null | head -1)
   if [ -n "$APP" ]; then
     echo ""
@@ -34,5 +45,5 @@ if [[ "$OSTYPE" == darwin* ]]; then
     echo "Mac .app not found in dist/. Open it manually from dist/."
   fi
 else
-  echo "Not on macOS — run the Windows installer from dist/ manually."
+  echo "Unsupported platform. Run electron-builder manually."
 fi

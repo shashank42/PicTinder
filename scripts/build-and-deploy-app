@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+set -e
+
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_DIR"
+
+# Load secrets from .env
+if [ -f "${PROJECT_DIR}/.env" ]; then
+  set -a; source "${PROJECT_DIR}/.env"; set +a
+fi
+
+: "${SSH_KEY:?Set SSH_KEY in .env}"
+: "${SERVER_USER:?Set SERVER_USER in .env}"
+: "${SERVER_IP:?Set SERVER_IP in .env}"
+
+SERVER_PATH="/home/${SERVER_USER}/projects/PicTinder/website"
+
+# ── 1. Install dependencies ──────────────────────────────────────
+if [ ! -d node_modules ]; then
+  echo "Installing dependencies..."
+  npm install
+fi
+
+# ── 2. Build the Electron app ────────────────────────────────────
+
+if [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == cygwin* ]]; then
+  # ── Windows: only build Windows exe ─────────────────────────────
+  echo ""
+  echo "=== Building for Windows ==="
+  npm run rebuild:win
+  npm run build:win
+else
+  # ── macOS: build both platforms ─────────────────────────────────
+  : "${APPLE_ID:?Set APPLE_ID in .env}"
+  : "${APPLE_APP_SPECIFIC_PASSWORD:?Set APPLE_APP_SPECIFIC_PASSWORD in .env}"
+  : "${APPLE_TEAM_ID:?Set APPLE_TEAM_ID in .env}"
+  export APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
+
+  echo ""
+  echo "=== Building for macOS ==="
+  npm run build:mac
+
+  echo ""
+  echo "=== Building for Windows ==="
+  npm run build:win || echo "⚠  Windows build failed (cross-compile not supported) — skipping."
+fi
+
+echo ""
+echo "Build output:"
+ls -1 dist/*.dmg dist/*.zip dist/*.exe 2>/dev/null || true
+
+# ── 3. Upload DMG to server ──────────────────────────────────────
+DMG=$(find dist -maxdepth 1 -name "*.dmg" | head -1)
+
+if [ -z "$DMG" ]; then
+  echo ""
+  echo "⚠  No .dmg found in dist/ — skipping DMG upload."
+else
+  echo ""
+  echo "==> Uploading ${DMG} to server…"
+  ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no "${SERVER_USER}@${SERVER_IP}" \
+    "mkdir -p ${SERVER_PATH}/downloads"
+  scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no \
+    "${DMG}" \
+    "${SERVER_USER}@${SERVER_IP}:${SERVER_PATH}/downloads/PicTinder.dmg"
+  echo "==> DMG uploaded."
+fi
+
+# ── 4. Upload Windows exe to server ──────────────────────────────
+EXE=$(find dist -maxdepth 1 -name "*Setup*.exe" 2>/dev/null | head -1)
+if [ -z "$EXE" ]; then
+  EXE=$(find dist -maxdepth 1 -name "*.exe" | head -1)
+fi
+
+if [ -z "$EXE" ]; then
+  echo ""
+  echo "⚠  No .exe found in dist/ — skipping exe upload."
+else
+  echo ""
+  echo "==> Uploading ${EXE} to server…"
+  ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no "${SERVER_USER}@${SERVER_IP}" \
+    "mkdir -p ${SERVER_PATH}/downloads"
+  scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no \
+    "${EXE}" \
+    "${SERVER_USER}@${SERVER_IP}:${SERVER_PATH}/downloads/PicTinder-Setup.exe"
+  echo "==> Windows exe uploaded."
+fi
+
+echo ""
+echo "=============================="
+echo " Build & upload complete!"
+[ -n "$DMG" ] && echo " Mac download:     https://pictinder.com/downloads/PicTinder.dmg"
+[ -n "$EXE" ] && echo " Windows download: https://pictinder.com/downloads/PicTinder-Setup.exe"
+echo ""
+echo " To fully deploy, also run:"
+echo "   ./scripts/deploy-website"
+echo "   ./scripts/deploy-licensing-server"
+echo "=============================="

@@ -116,11 +116,30 @@ flowchart TB
 
 **From the app:** open Pictinder, add a media folder, click **Start server**, scan the QR code on your phone.
 
-**From source:**
+**From source (macOS):**
 
 ```bash
 npm install
 npm start            # dev
 npm run build:mac    # macOS .dmg
-npm run build:win    # Windows installer
+```
+
+**From source (Windows):**
+
+Prerequisites:
+- Node.js (LTS)
+- Visual Studio Build Tools (with "Desktop development with C++" workload) — needed for native modules like `better-sqlite3`, `canvas`, and `@tensorflow/tfjs-node`
+
+```powershell
+npm install
+npm run rebuild:win          # rebuild native modules with VS environment
+npm start                    # dev
+npm run build:win            # Windows .exe (NSIS installer + portable)
+```
+
+Cross-platform helper scripts:
+
+```bash
+npm run run:dev              # install deps + start app (skips license check)
+npm run build:test           # build + launch for current platform
 ```

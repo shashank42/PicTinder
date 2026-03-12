@@ -5,9 +5,13 @@
   "main": "main.js",
   "scripts": {
     "postinstall": "electron-rebuild",
+    "rebuild": "electron-rebuild",
+    "rebuild:win": "node scripts/run-rebuild-with-vs.js",
     "start": "electron .",
+    "run:dev": "node test-scripts/run.js",
     "build:mac": "electron-builder --mac",
-    "build:win": "electron-builder --win"
+    "build:win": "electron-builder --win",
+    "build:test": "node test-scripts/build-and-run.js"
   },
   "keywords": [
     "electron",
@@ -68,7 +72,8 @@
       "target": [
         "nsis",
         "portable"
-      ]
+      ],
+      "signAndEditExecutable": false
     }
   }
 }
