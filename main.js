@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { app, BrowserWindow, ipcMain, dialog, shell, safeStorage } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog, shell, safeStorage } = require('electron');
 const path = require('path');
 const crypto = require('crypto');
 const os = require('os');
@@ -222,6 +222,10 @@ function createWindow() {
     } catch (err) {
       console.warn('Failed to set dock icon:', err);
     }
+  }
+
+  if (process.platform !== 'darwin') {
+    mainWindow.setMenu(null);
   }
 
   mainWindow.loadFile(path.join(__dirname, 'desktop', 'index.html'));

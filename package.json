@@ -29,7 +29,8 @@
   "devDependencies": {
     "@electron/rebuild": "^4.0.3",
     "electron": "^28.0.0",
-    "electron-builder": "^24.9.1"
+    "electron-builder": "^24.9.1",
+    "rcedit": "^5.0.2"
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "^4.22.0",
@@ -50,6 +51,7 @@
     "directories": {
       "output": "dist"
     },
+    "afterPack": "scripts/afterPack.js",
     "asarUnpack": [
       "**/better-sqlite3/**",
       "**/sharp/**",
@@ -78,6 +80,7 @@
         "nsis",
         "portable"
       ],
+      "icon": "build/icon.ico",
       "signAndEditExecutable": false
     }
   }
