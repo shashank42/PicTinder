@@ -1385,3 +1385,154 @@ body {
   color: #1d1d1f;
   font-weight: 600;
 }
+
+/* ── License activation gate ──────────────────────────────────── */
+
+.license-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #f5f5f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-app-region: drag;
+}
+
+.license-gate__card {
+  width: 340px;
+  background: #fff;
+  border: 1px solid #e8e8ed;
+  border-radius: 14px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  -webkit-app-region: no-drag;
+}
+
+.license-gate__logo {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #1d1d1f;
+  text-align: center;
+}
+
+.license-gate__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  color: #1d1d1f;
+}
+
+.license-gate__hint {
+  margin: 0;
+  font-size: 12px;
+  color: #86868b;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.license-gate__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.license-gate__field label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: #86868b;
+}
+
+.license-gate__field input {
+  padding: 9px 12px;
+  border: 1px solid #d2d2d7;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fafafa;
+  color: #1d1d1f;
+  transition: border-color .15s;
+}
+
+.license-gate__field input:focus {
+  outline: none;
+  border-color: #0071e3;
+  background: #fff;
+}
+
+.license-gate__error {
+  font-size: 12px;
+  color: #ff3b30;
+  text-align: center;
+  padding: 6px 10px;
+  background: rgba(255,59,48,.06);
+  border-radius: 6px;
+}
+
+.license-gate__btn {
+  width: 100%;
+  padding: 11px;
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+.license-gate__btn:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.license-gate__footer {
+  margin: 0;
+  font-size: 11px;
+  color: #86868b;
+  text-align: center;
+}
+
+.license-gate__footer a {
+  color: #0071e3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.license-gate__footer a:hover {
+  text-decoration: underline;
+}
+
+/* Licensed state — show license info in settings */
+.license-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #f0faf0;
+  border: 1px solid #c6ecc6;
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+.license-info__email {
+  color: #1d1d1f;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.license-info__badge {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #34c759;
+  background: rgba(52,199,89,.12);
+  padding: 2px 6px;
+  border-radius: 4px;
+}

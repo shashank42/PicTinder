@@ -24,10 +24,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Environment and secrets
+# Environment and secrets — NEVER commit these
 .env
 .env.local
 .env.*.local
+licensing-server/.env
 
 # Caches and temporary files
 .cache/
@@ -48,7 +49,9 @@ cursor_*.md
 phone/patch.js
 phone/revert.js
 test_sharp.js
-test-build.sh
 
 # Face recognition generated data
 face-thumbnails/
+
+# Recordings
+pictinder-recordings/

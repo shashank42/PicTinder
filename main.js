@@ -1,6 +1,8 @@
 require('dotenv').config();
 const { app, BrowserWindow, ipcMain, dialog, shell, safeStorage } = require('electron');
 const path = require('path');
+const crypto = require('crypto');
+const os = require('os');
 const Store = require('electron-store');
 const { createServer } = require('./server');
 
@@ -10,6 +12,14 @@ const store = new Store();
 let mainWindow = null;
 let serverInstance = null;
 let currentServerPort = null;
+
+// ---------------------------------------------------------------------------
+// License configuration
+// ---------------------------------------------------------------------------
+
+const LICENSE_API_BASE = 'https://pictinder.com/api';
+const LICENSE_VERIFY_INTERVAL_MS = 24 * 60 * 60 * 1000; // re-verify once per day
+const SKIP_LICENSE = process.env.SKIP_LICENSE === '1';
 
 function getCloudTokenMap() {
   return store.get('cloudTokens', {});
@@ -40,8 +50,142 @@ function decryptToken(enc) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// License helpers
+// ---------------------------------------------------------------------------
+
+function getMachineId() {
+  const cached = store.get('machineId');
+  if (cached) return cached;
+
+  const hostname = os.hostname();
+  const platform = os.platform();
+  const arch = os.arch();
+  const cpus = os.cpus();
+  const cpuModel = cpus.length > 0 ? cpus[0].model : '';
+  const nets = os.networkInterfaces();
+  let mac = '';
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (!net.internal && net.mac && net.mac !== '00:00:00:00:00:00') {
+        mac = net.mac;
+        break;
+      }
+    }
+    if (mac) break;
+  }
+  const raw = `${hostname}|${platform}|${arch}|${cpuModel}|${mac}`;
+  const id = crypto.createHash('sha256').update(raw).digest('hex').slice(0, 32);
+  store.set('machineId', id);
+  return id;
+}
+
+function getLicense() {
+  return store.get('license', null);
+}
+
+function setLicense(data) {
+  store.set('license', data);
+}
+
+function clearLicense() {
+  store.delete('license');
+}
+
+async function licenseApiCall(endpoint, body) {
+  const { net } = require('electron');
+  return new Promise((resolve, reject) => {
+    const url = `${LICENSE_API_BASE}${endpoint}`;
+    const postData = JSON.stringify(body);
+    const request = net.request({ method: 'POST', url });
+    request.setHeader('Content-Type', 'application/json');
+
+    let responseBody = '';
+    request.on('response', (response) => {
+      response.on('data', (chunk) => { responseBody += chunk.toString(); });
+      response.on('end', () => {
+        try {
+          const parsed = JSON.parse(responseBody);
+          resolve({ status: response.statusCode, data: parsed });
+        } catch {
+          resolve({ status: response.statusCode, data: { error: responseBody } });
+        }
+      });
+    });
+    request.on('error', (err) => reject(err));
+    request.write(postData);
+    request.end();
+  });
+}
+
+async function activateLicense(email, licenseKey) {
+  const machineId = getMachineId();
+  const result = await licenseApiCall('/license/activate', { email, licenseKey, machineId });
+  if (result.status === 200 && result.data.valid) {
+    setLicense({ email, licenseKey, machineId, activatedAt: new Date().toISOString(), lastVerified: Date.now() });
+    return { ok: true };
+  }
+  return { ok: false, error: result.data.error || 'Activation failed' };
+}
+
+async function verifyLicense() {
+  const lic = getLicense();
+  if (!lic) return { valid: false };
+  try {
+    const result = await licenseApiCall('/license/verify', {
+      email: lic.email,
+      licenseKey: lic.licenseKey,
+      machineId: lic.machineId,
+    });
+    if (result.status === 200 && result.data.valid) {
+      setLicense({ ...lic, lastVerified: Date.now() });
+      return { valid: true };
+    }
+    return { valid: false, error: result.data.error };
+  } catch {
+    // Offline — trust local license if verified recently
+    if (lic.lastVerified && (Date.now() - lic.lastVerified) < LICENSE_VERIFY_INTERVAL_MS * 7) {
+      return { valid: true, offline: true };
+    }
+    return { valid: false, error: 'Unable to verify license. Check your internet connection.' };
+  }
+}
+
+async function deactivateLicense() {
+  const lic = getLicense();
+  if (!lic) return { ok: true };
+  try {
+    await licenseApiCall('/license/deactivate', {
+      email: lic.email,
+      licenseKey: lic.licenseKey,
+      machineId: lic.machineId,
+    });
+  } catch { /* best-effort */ }
+  clearLicense();
+  return { ok: true };
+}
+
+// IPC handlers for licensing
+ipcMain.handle('get-license-status', () => {
+  if (SKIP_LICENSE) return { licensed: true, email: 'dev@localhost', licenseKey: 'DEV-MODE' };
+  const lic = getLicense();
+  return { licensed: !!lic, email: lic?.email || '', licenseKey: lic?.licenseKey || '' };
+});
+
+ipcMain.handle('activate-license', async (_evt, { email, licenseKey }) => {
+  return activateLicense(email, licenseKey);
+});
+
+ipcMain.handle('deactivate-license', async () => {
+  return deactivateLicense();
+});
+
+ipcMain.handle('verify-license', async () => {
+  if (SKIP_LICENSE) return { valid: true };
+  return verifyLicense();
+});
+
 function getLocalIP() {
-  const os = require('os');
   const nets = os.networkInterfaces();
   for (const name of Object.keys(nets)) {
     for (const net of nets[name]) {
@@ -257,7 +401,25 @@ ipcMain.handle('stop-server', async () => {
   }
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+
+  // Background license re-verification (daily)
+  setInterval(async () => {
+    const lic = getLicense();
+    if (!lic) return;
+    const timeSince = Date.now() - (lic.lastVerified || 0);
+    if (timeSince > LICENSE_VERIFY_INTERVAL_MS) {
+      const result = await verifyLicense();
+      if (!result.valid && !result.offline) {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('license-revoked');
+        }
+      }
+    }
+  }, 60 * 60 * 1000); // check every hour whether a re-verify is due
+});
+
 app.on('window-all-closed', () => {
   if (serverInstance) serverInstance.stop().catch(() => { });
   app.quit();

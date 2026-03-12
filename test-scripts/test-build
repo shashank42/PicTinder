@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -e
+
+cd "$(dirname "$0")/.."
+
+if [ ! -d node_modules ]; then
+  echo "Installing dependencies..."
+  npm install
+fi
+
+if [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == cygwin* ]]; then
+  echo "Windows detected — installing NVIDIA GPU support…"
+  npm install --no-save @tensorflow/tfjs-node-gpu 2>/dev/null \
+    && echo "GPU package installed" \
+    || echo "GPU package unavailable — will use CPU"
+fi
+
+echo ""
+echo "=== Building fast test macOS app (Unsigned) ==="
+npm run build:mac -- -c.mac.identity=null -c.mac.hardenedRuntime=false
+
+echo ""
+echo "Build output is in ./dist/"
+ls -1 dist/*.dmg dist/*.zip dist/*.exe 2>/dev/null || true
+
+if [[ "$OSTYPE" == darwin* ]]; then
+  APP=$(find dist/mac* -name "PicTinder.app" -maxdepth 2 2>/dev/null | head -1)
+  if [ -n "$APP" ]; then
+    echo ""
+    echo "Launching $APP ..."
+    xattr -cr "$APP" 2>/dev/null || true
+    open "$APP"
+  else
+    echo "Mac .app not found in dist/. Open it manually from dist/."
+  fi
+else
+  echo "Not on macOS — run the Windows installer from dist/ manually."
+fi

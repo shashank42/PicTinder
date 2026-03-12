@@ -1,3 +1,123 @@
+// ---------------------------------------------------------------------------
+// License gate — blocks UI until a valid license is activated
+// ---------------------------------------------------------------------------
+
+const licenseGate = document.getElementById('licenseGate');
+const licenseEmailInput = document.getElementById('licenseEmail');
+const licenseKeyInput = document.getElementById('licenseKeyInput');
+const licenseErrorEl = document.getElementById('licenseError');
+const activateBtn = document.getElementById('activateBtn');
+const buyLink = document.getElementById('buyLink');
+
+function showLicenseError(msg) {
+  licenseErrorEl.textContent = msg;
+  licenseErrorEl.classList.remove('hidden');
+}
+
+function hideLicenseError() {
+  licenseErrorEl.classList.add('hidden');
+}
+
+function unlockApp() {
+  licenseGate.classList.add('hidden');
+}
+
+function showLicenseGate() {
+  licenseGate.classList.remove('hidden');
+}
+
+activateBtn.addEventListener('click', async () => {
+  hideLicenseError();
+  const email = licenseEmailInput.value.trim();
+  const key = licenseKeyInput.value.trim().toUpperCase();
+  if (!email) { showLicenseError('Please enter your email address.'); return; }
+  if (!key) { showLicenseError('Please enter your license key.'); return; }
+
+  activateBtn.disabled = true;
+  activateBtn.textContent = 'Activating…';
+  try {
+    const result = await window.pictinder.activateLicense(email, key);
+    if (result.ok) {
+      unlockApp();
+      renderLicenseInfo(email);
+    } else {
+      showLicenseError(result.error || 'Activation failed. Check your credentials.');
+    }
+  } catch (err) {
+    showLicenseError('Network error — check your internet connection and try again.');
+  } finally {
+    activateBtn.disabled = false;
+    activateBtn.textContent = 'Activate';
+  }
+});
+
+licenseKeyInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') activateBtn.click(); });
+licenseEmailInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') licenseKeyInput.focus(); });
+
+buyLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (window.pictinder && window.pictinder.openExternalUrl) {
+    window.pictinder.openExternalUrl('https://pictinder.com/pricing.html');
+  }
+});
+
+document.getElementById('recoverLink').addEventListener('click', (e) => {
+  e.preventDefault();
+  if (window.pictinder && window.pictinder.openExternalUrl) {
+    window.pictinder.openExternalUrl('https://pictinder.com/recover.html');
+  }
+});
+
+window.pictinder.onLicenseRevoked(() => {
+  showLicenseGate();
+  showLicenseError('Your license has been revoked or deactivated. Please re-activate.');
+});
+
+function renderLicenseInfo(email) {
+  let infoEl = document.getElementById('licenseInfo');
+  if (!infoEl) {
+    infoEl = document.createElement('div');
+    infoEl.id = 'licenseInfo';
+    infoEl.className = 'license-info';
+    const settingsSection = document.querySelector('.settings');
+    if (settingsSection) settingsSection.prepend(infoEl);
+  }
+  infoEl.innerHTML =
+    '<span class="license-info__email">' + escapeHtmlSafe(email) + '</span>' +
+    '<span class="license-info__badge">Pro</span>';
+}
+
+function escapeHtmlSafe(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// Check license on startup
+(async function checkLicense() {
+  try {
+    const status = await window.pictinder.getLicenseStatus();
+    if (status.licensed) {
+      const verify = await window.pictinder.verifyLicense();
+      if (verify.valid) {
+        unlockApp();
+        renderLicenseInfo(status.email);
+      } else {
+        showLicenseGate();
+        if (verify.error) showLicenseError(verify.error);
+      }
+    } else {
+      showLicenseGate();
+    }
+  } catch {
+    showLicenseGate();
+  }
+})();
+
+// ---------------------------------------------------------------------------
+// Main app (loads after license check)
+// ---------------------------------------------------------------------------
+
 const portEl = document.getElementById('port');
 const addFolderBtn = document.getElementById('addFolder');
 const folderListEl = document.getElementById('folderList');

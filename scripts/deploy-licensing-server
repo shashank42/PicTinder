@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+# Load secrets from .env
+if [ -f "${PROJECT_DIR}/.env" ]; then
+  set -a; source "${PROJECT_DIR}/.env"; set +a
+fi
+
+: "${SSH_KEY:?Set SSH_KEY in .env}"
+: "${SERVER_USER:?Set SERVER_USER in .env}"
+: "${SERVER_IP:?Set SERVER_IP in .env}"
+: "${PADDLE_WEBHOOK_SECRET:?Set PADDLE_WEBHOOK_SECRET in .env}"
+: "${PADDLE_API_KEY:?Set PADDLE_API_KEY in .env}"
+: "${RESEND_API_KEY:?Set RESEND_API_KEY in .env}"
+
+LICENSE_PATH="/home/${SERVER_USER}/projects/PicTinder/licensing-server"
+SSH_CMD="ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP}"
+
+echo "==> Deploying licensing server to ${SERVER_USER}@${SERVER_IP}:${LICENSE_PATH}"
+
+$SSH_CMD "mkdir -p ${LICENSE_PATH}"
+
+rsync -avz --delete \
+  --exclude='node_modules' \
+  --exclude='licenses.db' \
+  --exclude='licenses.db-wal' \
+  --exclude='licenses.db-shm' \
+  --exclude='.env' \
+  -e "ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no" \
+  "${PROJECT_DIR}/licensing-server/" \
+  "${SERVER_USER}@${SERVER_IP}:${LICENSE_PATH}/"
+
+echo "==> Licensing server files synced."
+
+# Write secrets to server .env and start the service
+$SSH_CMD "PADDLE_WEBHOOK_SECRET='${PADDLE_WEBHOOK_SECRET}' PADDLE_API_KEY='${PADDLE_API_KEY}' RESEND_API_KEY='${RESEND_API_KEY}' bash -s" << 'REMOTE'
+set -euo pipefail
+
+LICENSE_DIR="/home/azureuser/projects/PicTinder/licensing-server"
+SERVICE_NAME="pictinder-license"
+
+# Node.js
+if ! command -v node &>/dev/null; then
+  echo "==> Installing Node.js 20.x…"
+  curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+  sudo apt-get install -y -qq nodejs
+fi
+
+cd "$LICENSE_DIR"
+npm install --production 2>&1 | tail -3
+
+# Write server .env (always overwrite secrets to stay in sync)
+cat > "${LICENSE_DIR}/.env" << ENVFILE
+PADDLE_WEBHOOK_SECRET=${PADDLE_WEBHOOK_SECRET}
+PADDLE_API_KEY=${PADDLE_API_KEY}
+RESEND_API_KEY=${RESEND_API_KEY}
+LICENSE_PORT=4100
+ENVFILE
+echo "==> Server .env written"
+
+# systemd service
+UNIT_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
+if [ ! -f "$UNIT_FILE" ]; then
+  echo "==> Creating systemd service: ${SERVICE_NAME}"
+  sudo tee "$UNIT_FILE" > /dev/null << UNIT
+[Unit]
+Description=PicTinder License Server
+After=network.target
+
+[Service]
+Type=simple
+User=${USER}
+WorkingDirectory=${LICENSE_DIR}
+EnvironmentFile=${LICENSE_DIR}/.env
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+  sudo systemctl daemon-reload
+  sudo systemctl enable "${SERVICE_NAME}"
+fi
+
+sudo systemctl restart "${SERVICE_NAME}"
+echo "==> License server running on port 4100"
+
+REMOTE
+
+echo ""
+echo "==> Licensing server deployed."

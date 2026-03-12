@@ -1492,6 +1492,7 @@ async function runLegacyFlow() {
 let facePromptQueue = [];
 let facePromptActive = false;
 let facePromptSkippedOccurrences = new Set();
+let facePromptsMuted = false;
 let cachedKnownIdentities = null;
 
 function getCurrentMediaPath() {
@@ -1514,12 +1515,10 @@ async function checkForUnknownFaces(mediaPath) {
     displayFaceChips(data.faces || []);
     updateFaceCountBadge(data.faces || []);
 
-    // Auto-prompt only for completely unidentified faces (no identity assigned at all).
-    // Faces clustered with empty names already show as "?" chips the user can tap.
     const unknownFaces = (data.faces || []).filter(f =>
-      !f.identityId && !facePromptSkippedOccurrences.has(f.id)
+      (!f.identityId || !f.identityName?.trim()) && !facePromptSkippedOccurrences.has(f.id)
     );
-    if (unknownFaces.length > 0) {
+    if (unknownFaces.length > 0 && !facePromptsMuted) {
       facePromptQueue = unknownFaces;
       showNextFacePrompt();
     }
@@ -1757,6 +1756,8 @@ async function showChipRenameInput(chip, face, popover) {
   inputRow.appendChild(input);
   inputRow.appendChild(saveBtn);
   popover.appendChild(inputRow);
+
+  input.focus();
 
   const doRename = async (newName) => {
     newName = (newName || input.value).trim();
@@ -2351,6 +2352,21 @@ async function init() {
   if (facePromptCloseBtn) facePromptCloseBtn.addEventListener('click', closeFacePrompt);
   const facePromptBackdropEl = document.getElementById('facePromptBackdrop');
   if (facePromptBackdropEl) facePromptBackdropEl.addEventListener('click', closeFacePrompt);
+
+  const muteBtn = document.getElementById('mutePromptsBtn');
+  if (muteBtn) {
+    muteBtn.addEventListener('click', () => {
+      facePromptsMuted = !facePromptsMuted;
+      muteBtn.classList.toggle('active', facePromptsMuted);
+      const icon = document.getElementById('mutePromptsIcon');
+      if (facePromptsMuted) {
+        icon.innerHTML = '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="11" x2="23" y2="17"/><line x1="23" y1="11" x2="17" y2="17"/>';
+        closeFacePrompt();
+      } else {
+        icon.innerHTML = '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="13" x2="17" y2="13"/>';
+      }
+    });
+  }
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'visible') return;

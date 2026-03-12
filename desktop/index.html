@@ -7,6 +7,30 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- ── License activation gate ──────────────────────────────── -->
+  <div id="licenseGate" class="license-gate">
+    <div class="license-gate__card">
+      <div class="license-gate__logo">PicTinder</div>
+      <h2 class="license-gate__title">Activate your license</h2>
+      <p class="license-gate__hint">Enter the email and license key from your purchase receipt.</p>
+      <div class="license-gate__field">
+        <label for="licenseEmail">Email address</label>
+        <input type="email" id="licenseEmail" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="license-gate__field">
+        <label for="licenseKeyInput">License key</label>
+        <input type="text" id="licenseKeyInput" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false" style="font-family:'SF Mono',Menlo,Monaco,Consolas,monospace; letter-spacing:.06em;" />
+      </div>
+      <div id="licenseError" class="license-gate__error hidden"></div>
+      <button type="button" id="activateBtn" class="btn primary license-gate__btn">Activate</button>
+      <p class="license-gate__footer">
+        Don't have a license? <a id="buyLink" href="#">Buy PicTinder Pro</a>
+        <br>
+        <a id="recoverLink" href="#" style="margin-top:4px; display:inline-block;">Lost your license key?</a>
+      </p>
+    </div>
+  </div>
+
   <div class="title-bar">
     <h1>Pictinder</h1>
     <div class="title-bar-actions">

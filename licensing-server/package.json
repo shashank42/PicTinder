@@ -1,0 +1,15 @@
+{
+  "name": "pictinder-licensing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PicTinder license key server — handles Paddle webhooks and license activation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "express": "^4.18.2",
+    "resend": "^4.0.0"
+  }
+}

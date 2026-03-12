@@ -1,6 +1,14 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('pictinder', {
+  // License
+  getLicenseStatus: () => ipcRenderer.invoke('get-license-status'),
+  activateLicense: (email, licenseKey) => ipcRenderer.invoke('activate-license', { email, licenseKey }),
+  deactivateLicense: () => ipcRenderer.invoke('deactivate-license'),
+  verifyLicense: () => ipcRenderer.invoke('verify-license'),
+  onLicenseRevoked: (cb) => { ipcRenderer.on('license-revoked', () => cb()); },
+
+  // App
   getInitialConfig: () => ipcRenderer.invoke('get-initial-config'),
   savePort: (port) => ipcRenderer.invoke('save-port', port),
   getFolders: () => ipcRenderer.invoke('get-folders'),

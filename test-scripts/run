@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 if [ ! -d node_modules ]; then
   echo "Installing dependencies..."
   npm install
 fi
 
-echo "Starting Pictinder..."
-npm start
+echo "Starting Pictinder (license check skipped)..."
+SKIP_LICENSE=1 npm start

@@ -1,8 +1,7 @@
-/* ── Paddle Configuration ─────────────────────────────────────────
-   Replace these with your actual Paddle credentials after setup.  */
-const PADDLE_CLIENT_TOKEN = 'YOUR_PADDLE_CLIENT_TOKEN';
-const PADDLE_PRICE_ID    = 'YOUR_PADDLE_PRICE_ID';
-const PADDLE_ENV         = 'sandbox'; // change to 'production' when live
+/* ── Paddle Configuration ──────────────────────────────────────── */
+const PADDLE_CLIENT_TOKEN = 'live_821d471428c80f700c25e7bd347';
+const PADDLE_PRICE_ID    = 'pri_01kkeemt0e32cny6fw4shy8ymb';
+const PADDLE_ENV         = 'production';
 
 /* ── Initialize Paddle ───────────────────────────────────────────── */
 function initPaddle() {
@@ -10,7 +9,17 @@ function initPaddle() {
   if (PADDLE_ENV === 'sandbox') {
     Paddle.Environment.set('sandbox');
   }
-  Paddle.Setup({ token: PADDLE_CLIENT_TOKEN });
+  Paddle.Setup({
+    token: PADDLE_CLIENT_TOKEN,
+    eventCallback: function (event) {
+      if (event.name === 'checkout.completed') {
+        var txnId = event.data && (event.data.transaction_id || event.data.id);
+        if (txnId) {
+          window.location.href = '/success.html?txn=' + encodeURIComponent(txnId);
+        }
+      }
+    },
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function () {

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank you — PicTinder</title>
+  <meta name="description" content="Your PicTinder Pro purchase is confirmed. Download the app and activate your license.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ── Navigation ─────────────────────────────────────────────── -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="images/icon.png" alt="PicTinder icon">
+        PicTinder
+      </a>
+      <ul class="nav__links">
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="index.html#how-it-works">How it works</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+      </ul>
+      <button class="nav__hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="pricing.html">Pricing</a>
+    </div>
+  </nav>
+
+  <!-- ── Success Content ──────────────────────────────────────── -->
+  <section class="section" style="min-height: 70vh; display: flex; align-items: center;">
+    <div class="container">
+      <div class="section__header">
+        <h2 id="successTitle">Processing your purchase&hellip;</h2>
+        <p id="successSubtitle">Hang tight, this usually takes just a few seconds.</p>
+      </div>
+
+      <!-- Loading state -->
+      <div id="loadingState" class="success-card" style="text-align:center; padding:40px 20px;">
+        <div class="success-spinner"></div>
+        <p style="color:#86868b; margin-top:16px;">Generating your license key&hellip;</p>
+      </div>
+
+      <!-- Success state (hidden until license is ready) -->
+      <div id="successState" class="success-card" style="display:none;">
+        <div class="success-row">
+          <div class="success-label">License key</div>
+          <div class="success-key-wrap">
+            <code id="licenseKey" class="success-key"></code>
+            <button type="button" id="copyKeyBtn" class="success-copy-btn" title="Copy to clipboard">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="success-row">
+          <div class="success-label">Registered email</div>
+          <div id="licenseEmail" class="success-value"></div>
+        </div>
+        <hr style="border:none; border-top:1px solid #e8e8ed; margin:8px 0;">
+        <div class="success-steps">
+          <div class="success-step">
+            <span class="success-step-num">1</span>
+            <span>Download PicTinder for Mac using the button below</span>
+          </div>
+          <div class="success-step">
+            <span class="success-step-num">2</span>
+            <span>Open the app — you'll see an activation screen</span>
+          </div>
+          <div class="success-step">
+            <span class="success-step-num">3</span>
+            <span>Enter your email and the license key above to unlock</span>
+          </div>
+        </div>
+        <a id="downloadBtn" href="/downloads/PicTinder.dmg" class="btn btn--primary btn--large" style="margin-top:16px; display:inline-flex; align-items:center; gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          Download PicTinder for Mac
+        </a>
+        <p class="success-note">A copy of this license key has been emailed to you. You can use it on up to 2 Macs.</p>
+      </div>
+
+      <!-- Error state (hidden unless something goes wrong) -->
+      <div id="errorState" class="success-card" style="display:none; text-align:center; padding:40px 20px;">
+        <p style="color:#ff3b30; font-weight:600;">Something went wrong</p>
+        <p id="errorMessage" style="color:#86868b; margin-top:8px;"></p>
+        <p style="color:#86868b; margin-top:16px;">If you completed payment, don't worry — your license key will arrive via email shortly. You can also recover it at <a href="/recover.html">pictinder.com/recover</a>. Contact <a href="mailto:admin@pictinder.com">admin@pictinder.com</a> if you need help.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <div class="footer__logo">PicTinder</div>
+        <p>Swipe to shortlist photos, together.</p>
+      </div>
+      <div class="footer__col">
+        <h4>Legal</h4>
+        <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="refund.html">Refund Policy</a>
+      </div>
+      <div class="footer__col">
+        <h4>Support</h4>
+        <a href="mailto:admin@pictinder.com">admin@pictinder.com</a>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      &copy; 2026 Natural Inc. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var txnId = params.get('txn');
+
+      if (!txnId) {
+        showError('No transaction ID found. If you just completed a purchase, check your email for the receipt.');
+        return;
+      }
+
+      var attempts = 0;
+      var maxAttempts = 15;
+
+      function poll() {
+        attempts++;
+        fetch('/api/license/by-transaction/' + encodeURIComponent(txnId))
+          .then(function (r) {
+            if (r.ok) return r.json();
+            if (r.status === 404 && attempts < maxAttempts) {
+              setTimeout(poll, 2000);
+              return null;
+            }
+            throw new Error('License not found after ' + (attempts * 2) + 's');
+          })
+          .then(function (data) {
+            if (!data) return;
+            showSuccess(data);
+          })
+          .catch(function (err) {
+            showError(err.message || 'Could not retrieve license.');
+          });
+      }
+
+      function showSuccess(data) {
+        document.getElementById('successTitle').textContent = 'You\u2019re all set!';
+        document.getElementById('successSubtitle').textContent = 'Your PicTinder Pro license is ready.';
+        document.getElementById('licenseKey').textContent = data.licenseKey;
+        document.getElementById('licenseEmail').textContent = data.email;
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('successState').style.display = 'block';
+      }
+
+      function showError(msg) {
+        document.getElementById('successTitle').textContent = 'Almost there';
+        document.getElementById('successSubtitle').textContent = '';
+        document.getElementById('errorMessage').textContent = msg;
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('errorState').style.display = 'block';
+      }
+
+      document.getElementById('copyKeyBtn').addEventListener('click', function () {
+        var key = document.getElementById('licenseKey').textContent;
+        navigator.clipboard.writeText(key).then(function () {
+          document.getElementById('copyKeyBtn').title = 'Copied!';
+          setTimeout(function () { document.getElementById('copyKeyBtn').title = 'Copy to clipboard'; }, 2000);
+        });
+      });
+
+      poll();
+    })();
+  </script>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
