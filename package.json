@@ -9,12 +9,14 @@
     "rebuild:win": "node scripts/run-rebuild-with-vs.js",
     "start": "electron .",
     "run:dev": "node test-scripts/run.js",
+    "build:test": "node test-scripts/build-and-run.js",
     "build:mac": "electron-builder --mac",
     "build:win": "electron-builder --win",
-    "build:test": "node test-scripts/build-and-run.js",
-    "deploy": "node scripts/deploy.js",
     "deploy:mac": "node scripts/deploy.js mac",
-    "deploy:win": "node scripts/deploy.js win"
+    "deploy:win": "node scripts/deploy.js win",
+    "deploy:app": "node scripts/deploy.js",
+    "deploy:website": "bash scripts/deploy-website",
+    "deploy:license": "bash scripts/deploy-licensing-server"
   },
   "keywords": [
     "electron",

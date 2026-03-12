@@ -82,6 +82,17 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   });
+
+  // ── OS-aware download buttons ──────────────────────────────────
+  var isWindows = navigator.userAgent.indexOf('Win') !== -1;
+  var downloadBtns = document.querySelectorAll('.btn--download');
+  downloadBtns.forEach(function (btn) {
+    var isMacBtn = btn.id && btn.id.indexOf('mac') !== -1;
+    var isWinBtn = btn.id && btn.id.indexOf('win') !== -1;
+    if ((isWindows && isWinBtn) || (!isWindows && isMacBtn)) {
+      btn.classList.add('is-recommended');
+    }
+  });
 });
 
 /* ── Paddle Checkout ─────────────────────────────────────────────── */

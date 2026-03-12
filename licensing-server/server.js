@@ -12,7 +12,8 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const PORT = parseInt(process.env.LICENSE_PORT, 10) || 4100;
 const MAX_ACTIVATIONS = 2;
 const FROM_EMAIL = 'PicTinder <license@pictinder.com>';
-const DOWNLOAD_URL = 'https://pictinder.com/downloads/PicTinder.dmg';
+const DOWNLOAD_URL_MAC = 'https://pictinder.com/downloads/PicTinder.dmg';
+const DOWNLOAD_URL_WIN = 'https://pictinder.com/downloads/PicTinder-Setup.exe';
 
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 
@@ -176,7 +177,7 @@ function buildLicenseEmailHtml(email, licenseKey) {
                 <td style="padding:6px 0;vertical-align:top;width:28px;">
                   <div style="width:22px;height:22px;background:#0071e3;color:#fff;border-radius:50%;font-size:12px;font-weight:700;text-align:center;line-height:22px;">1</div>
                 </td>
-                <td style="padding:6px 0 6px 8px;font-size:14px;color:#444;line-height:1.4;">Download PicTinder for Mac using the button below</td>
+                <td style="padding:6px 0 6px 8px;font-size:14px;color:#444;line-height:1.4;">Download PicTinder for your platform using the buttons below</td>
               </tr>
               <tr>
                 <td style="padding:6px 0;vertical-align:top;width:28px;">
@@ -192,14 +193,17 @@ function buildLicenseEmailHtml(email, licenseKey) {
               </tr>
             </table>
 
-            <!-- Download button -->
+            <!-- Download buttons -->
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;">
+              <tr><td align="center" style="padding-bottom:10px;">
+                <a href="${DOWNLOAD_URL_MAC}" style="display:inline-block;background:#0071e3;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:10px;">Download for macOS</a>
+              </td></tr>
               <tr><td align="center">
-                <a href="${DOWNLOAD_URL}" style="display:inline-block;background:#0071e3;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:10px;">Download PicTinder for Mac</a>
+                <a href="${DOWNLOAD_URL_WIN}" style="display:inline-block;background:#1d1d1f;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:10px;">Download for Windows</a>
               </td></tr>
             </table>
 
-            <p style="margin:24px 0 0;font-size:12px;color:#86868b;line-height:1.5;">Your license works on up to 2 Macs. If you need to move it to a new machine, deactivate the old one first from the app settings.</p>
+            <p style="margin:24px 0 0;font-size:12px;color:#86868b;line-height:1.5;">Your license works on up to 2 computers (Mac or PC). If you need to move it to a new machine, deactivate the old one first from the app settings.</p>
           </td>
         </tr>
         <!-- Footer -->
