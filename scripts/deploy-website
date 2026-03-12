@@ -17,9 +17,8 @@ SSH_CMD="ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_I
 
 echo "==> Deploying website to ${SERVER_USER}@${SERVER_IP}:${SERVER_PATH}"
 
-$SSH_CMD "mkdir -p ${SERVER_PATH}/downloads"
-
 rsync -avz --delete \
+  --exclude='downloads' \
   --exclude='deploy.sh' \
   -e "ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no" \
   "${PROJECT_DIR}/website/" \
