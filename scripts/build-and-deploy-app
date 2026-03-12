@@ -4,6 +4,9 @@ set -e
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$PROJECT_DIR"
 
+# Accept platform argument: mac, win, or empty (auto-detect / both)
+PLATFORM="${1:-}"
+
 # Load secrets from .env
 if [ -f "${PROJECT_DIR}/.env" ]; then
   set -a; source "${PROJECT_DIR}/.env"; set +a
@@ -21,16 +24,24 @@ if [ ! -d node_modules ]; then
   npm install
 fi
 
-# ── 2. Build the Electron app ────────────────────────────────────
+# ── 2. Determine what to build ───────────────────────────────────
+BUILD_MAC=false
+BUILD_WIN=false
 
-if [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == cygwin* ]]; then
-  # ── Windows: only build Windows exe ─────────────────────────────
-  echo ""
-  echo "=== Building for Windows ==="
-  npm run rebuild:win
-  npm run build:win
+if [ "$PLATFORM" = "mac" ]; then
+  BUILD_MAC=true
+elif [ "$PLATFORM" = "win" ]; then
+  BUILD_WIN=true
+elif [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == cygwin* ]]; then
+  BUILD_WIN=true
 else
-  # ── macOS: build both platforms ─────────────────────────────────
+  BUILD_MAC=true
+  BUILD_WIN=true
+fi
+
+# ── 3. Build the Electron app ────────────────────────────────────
+
+if $BUILD_MAC; then
   : "${APPLE_ID:?Set APPLE_ID in .env}"
   : "${APPLE_APP_SPECIFIC_PASSWORD:?Set APPLE_APP_SPECIFIC_PASSWORD in .env}"
   : "${APPLE_TEAM_ID:?Set APPLE_TEAM_ID in .env}"
@@ -39,10 +50,15 @@ else
   echo ""
   echo "=== Building for macOS ==="
   npm run build:mac
+fi
 
+if $BUILD_WIN; then
   echo ""
   echo "=== Building for Windows ==="
-  npm run build:win || echo "⚠  Windows build failed (cross-compile not supported) — skipping."
+  if [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == cygwin* ]]; then
+    npm run rebuild:win
+  fi
+  npm run build:win || echo "⚠  Windows build failed — skipping."
 fi
 
 echo ""

@@ -29,6 +29,7 @@ pnpm-debug.log*
 .env.local
 .env.*.local
 licensing-server/.env
+*.pem
 
 # Caches and temporary files
 .cache/
