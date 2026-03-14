@@ -15,6 +15,25 @@ fi
 SERVER_PATH="/home/${SERVER_USER}/projects/PicTinder/website"
 SSH_CMD="ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP}"
 
+echo "==> Compressing demo video…"
+
+DEMO_SRC="${PROJECT_DIR}/readme-pics/DemoWithFace.mp4"
+DEMO_DST="${PROJECT_DIR}/website/videos/demo.mp4"
+
+if [ ! -f "$DEMO_SRC" ]; then
+  echo "ERROR: ${DEMO_SRC} not found"; exit 1
+fi
+
+mkdir -p "$(dirname "$DEMO_DST")"
+
+ffmpeg -y -i "$DEMO_SRC" \
+  -vcodec libx264 -crf 23 -preset slow -r 30 \
+  -acodec aac -b:a 96k \
+  -movflags +faststart \
+  "$DEMO_DST" 2>&1 | tail -1
+
+echo "==> Video compressed: $(du -h "$DEMO_DST" | cut -f1)"
+
 echo "==> Deploying website to ${SERVER_USER}@${SERVER_IP}:${SERVER_PATH}"
 
 rsync -avz --delete \

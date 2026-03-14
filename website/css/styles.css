@@ -209,7 +209,7 @@ h1, h2, h3, h4 {
 
 /* ── Hero ─────────────────────────────────────────────────────────── */
 .hero {
-  padding: 80px 0 64px;
+  padding: 100px 0 72px;
   text-align: center;
 }
 
@@ -382,6 +382,42 @@ h1, h2, h3, h4 {
 .btn svg {
   width: 18px;
   height: 18px;
+}
+
+/* ── Demo Video ──────────────────────────────────────────────────── */
+.demo {
+  padding: 0 0 80px;
+  background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-alt) 100%);
+}
+
+.demo__window {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.12),
+    0 4px 20px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.demo__video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+
+
+@media (max-width: 768px) {
+  .demo {
+    padding: 0 0 56px;
+  }
+
+  .demo__window {
+    border-radius: 8px;
+  }
 }
 
 /* ── How it Works ─────────────────────────────────────────────────── */
